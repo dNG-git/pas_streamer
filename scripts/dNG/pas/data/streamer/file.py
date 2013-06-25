@@ -205,15 +205,11 @@ Opens a file session.
 
 		if (self.resource == None):
 		#
-			mimetypes = MimeType.get_instance()
-
 			url_ext = path.splitext(file_pathname)[1]
-			mimetype_definition = mimetypes.get(url_ext[1:])
+			mimetype_definition = MimeType.get_instance().get(url_ext[1:])
 
 			self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
 			var_return = self.resource.open(file_pathname, True, ("r" if (mimetype_definition['type'] == "text") else "rb"))
-
-			mimetypes.return_instance()
 		#
 		else: var_return = False
 

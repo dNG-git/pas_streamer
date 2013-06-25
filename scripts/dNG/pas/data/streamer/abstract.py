@@ -72,7 +72,6 @@ Destructor __del__(Abstract)
 		"""
 
 		self.close()
-		if (self.log_handler != None): self.log_handler.return_instance()
 	#
 
 	def __iter__(self):
