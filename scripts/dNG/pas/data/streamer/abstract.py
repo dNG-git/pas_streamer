@@ -152,12 +152,12 @@ Returns the size in bytes.
 		return False
 	#
 
-	def read(self, var_bytes = 4096):
+	def read(self, _bytes = 4096):
 	#
 		"""
 Reads from the current streamer session.
 
-:param var_bytes: How many bytes to read from the current position (0 means
+:param _bytes: How many bytes to read from the current position (0 means
                   until EOF)
 
 :return: (mixed) Data; None if EOF; False on error
@@ -204,11 +204,11 @@ Seek to a given offset.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -streamer.set_range({0:d}, {1:d})- (#echo(__LINE__)#)".format(range_start, range_end))
-		var_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.supports_seeking())) else False)
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.set_range({0:d}, {1:d})- (#echo(__LINE__)#)".format(range_start, range_end))
+		_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.supports_seeking())) else False)
 
-		if (var_return): self.stream_size = (1 + range_end - range_start)
-		return var_return
+		if (_return): self.stream_size = (1 + range_end - range_start)
+		return _return
 	#
 
 	def supports_seeking(self):

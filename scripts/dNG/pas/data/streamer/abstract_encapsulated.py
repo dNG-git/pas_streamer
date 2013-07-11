@@ -135,19 +135,19 @@ Returns the size in bytes.
 		return self.streamer.get_size()
 	#
 
-	def read(self, var_bytes = 4096):
+	def read(self, _bytes = 4096):
 	#
 		"""
 Reads from the current streamer session.
 
-:param var_bytes: How many bytes to read from the current position (0 means
+:param _bytes: How many bytes to read from the current position (0 means
                   until EOF)
 
 :return: (mixed) Data; None if EOF; False on error
 :since:  v0.1.00
 		"""
 
-		return self.streamer.read(var_bytes)
+		return self.streamer.read(_bytes)
 	#
 
 	def resource_check(self):

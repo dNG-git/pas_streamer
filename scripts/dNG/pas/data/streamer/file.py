@@ -76,14 +76,14 @@ Closes all related resource pointers for the active streamer session.
 :since: v0.1.00
 		"""
 
-		if (self.resource == None): var_return = False
+		if (self.resource == None): _return = False
 		else:
 		#
-			var_return = self.resource.close()
+			_return = self.resource.close()
 			self.resource = None
 		#
 
-		return var_return
+		return _return
 	#
 
 	def eof_check(self):
@@ -122,7 +122,7 @@ Returns the size in bytes.
 		return (False if (self.file_pathname == None) else os.stat(self.file_pathname).st_size)
 	#
 
-	def read(self, var_bytes = 65536):
+	def read(self, _bytes = 65536):
 	#
 		"""
 Reads from the current streamer session.
@@ -134,20 +134,20 @@ Reads from the current streamer session.
 :since:  v0.1.00
 		"""
 
-		if (self.resource == None): var_return = False
-		elif (self.resource.eof_check()): var_return = None
+		if (self.resource == None): _return = False
+		elif (self.resource.eof_check()): _return = None
 		else:
 		#
 			if (self.stream_size > 0):
 			#
-				if (var_bytes > self.stream_size): var_bytes = self.stream_size
-				self.stream_size -= var_bytes
+				if (_bytes > self.stream_size): _bytes = self.stream_size
+				self.stream_size -= _bytes
 			#
 
-			var_return = (self.resource.read(var_bytes) if (var_bytes > 0) else None)
+			_return = (self.resource.read(_bytes) if (_bytes > 0) else None)
 		#
 
-		return var_return
+		return _return
 	#
 
 	def resource_check(self):
@@ -173,7 +173,7 @@ Seek to a given offset.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -fileStreamer.seek({0:d})- (#echo(__LINE__)#)".format(offset))
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.seek({0:d})- (#echo(__LINE__)#)".format(offset))
 		return (False if (self.resource == None) else self.resource.seek(offset))
 	#
 
@@ -201,7 +201,7 @@ Opens a file session.
 		"""
 
 		file_pathname = Binary.str(file_pathname)
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -fileStreamer.open({0})- (#echo(__LINE__)#)".format(file_pathname))
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.open({0})- (#echo(__LINE__)#)".format(file_pathname))
 
 		if (self.resource == None):
 		#
@@ -209,12 +209,12 @@ Opens a file session.
 			mimetype_definition = MimeType.get_instance().get(url_ext[1:])
 
 			self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
-			var_return = self.resource.open(file_pathname, True, ("r" if (mimetype_definition['type'] == "text") else "rb"))
+			_return = self.resource.open(file_pathname, True, ("r" if (mimetype_definition['type'] == "text") else "rb"))
 		#
-		else: var_return = False
+		else: _return = False
 
-		self.file_pathname = (file_pathname if (var_return) else None)
-		return var_return
+		self.file_pathname = (file_pathname if (_return) else None)
+		return _return
 	#
 
 	def open_url(self, url):
