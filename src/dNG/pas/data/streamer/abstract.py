@@ -25,7 +25,10 @@ NOTE_END //n"""
 
 from collections import Iterator
 
+from dNG.pas.data.traced_exception import TracedException
 from dNG.pas.module.named_loader import NamedLoader
+from dNG.pas.runtime.instance_lock import InstanceLock
+from dNG.pas.runtime.thread_lock import ThreadLock
 
 class Abstract(Iterator):
 #
@@ -42,6 +45,15 @@ interface is similar to a file one.
              Mozilla Public License, v. 2.0
 	"""
 
+	exclusive_streamers = { }
+	"""
+Weak references to active and exclusive streamers.
+	"""
+	exclusive_lock = InstanceLock()
+	"""
+Thread safety lock
+	"""
+
 	def __init__(self, timeout_retries = 5):
 	#
 		"""
@@ -52,11 +64,18 @@ Constructor __init__(Abstract)
 :since: v0.1.00
 		"""
 
+		self.lock = ThreadLock()
+		"""
+Thread safety lock
+		"""
 		self.log_handler = NamedLoader.get_singleton("dNG.pas.data.logging.LogHandler", False)
 		"""
 Retries before timing out
 		"""
 		self.stream_size = 0
+		"""
+Requested stream size
+		"""
 		self.timeout_retries = (5 if (timeout_retries == None) else timeout_retries)
 		"""
 Retries before timing out
@@ -95,12 +114,16 @@ python.org: Return the next item from the container.
 :since:  v0.1.00
 		"""
 
-		if (self.streamer.eof_check()):
+		with self.lock:
 		#
-			self.close()
-			raise StopIteration()
+			if (self.streamer.eof_check()):
+			#
+				self.close()
+				raise StopIteration()
+			#
+
+			return self.read()
 		#
-		else: return self.read()
 	#
 	next = __next__
 
@@ -113,7 +136,7 @@ Closes all related resource pointers for the active streamer session.
 :since: v0.1.00
 		"""
 
-		raise RuntimeError("Not implemented", 38)
+		raise TracedException("Not implemented")
 	#
 
 	def eof_check(self):
@@ -125,7 +148,7 @@ Checks if the resource has reached EOF.
 :since:  v0.1.00
 		"""
 
-		raise RuntimeError("Not implemented", 38)
+		raise TracedException("Not implemented")
 	#
 
 	def get_position(self):
@@ -164,7 +187,7 @@ Reads from the current streamer session.
 :since:  v0.1.00
 		"""
 
-		raise RuntimeError("Not implemented", 38)
+		raise TracedException("Not implemented")
 	#
 
 	def resource_check(self):
@@ -176,7 +199,7 @@ Returns true if the streamer resource is available.
 :since:  v0.1.00
 		"""
 
-		raise RuntimeError("Not implemented", 38)
+		raise TracedException("Not implemented")
 	#
 
 	def seek(self, offset):
@@ -196,18 +219,23 @@ Seek to a given offset.
 	def set_range(self, range_start, range_end):
 	#
 		"""
-Seek to a given offset.
+Define a range to be streamed.
 
-:param offset: Seek to the given offset
+:param range_start: First byte of range
+:param range_end: Last byte of range
 
-:return: (bool) True on success
+:return: (bool) True if valid
 :since:  v0.1.00
 		"""
 
 		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.set_range({0:d}, {1:d})- (#echo(__LINE__)#)".format(range_start, range_end))
-		_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.supports_seeking())) else False)
 
-		if (_return): self.stream_size = (1 + range_end - range_start)
+		with self.lock:
+		#
+			_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.supports_seeking())) else False)
+			if (_return): self.stream_size = (1 + range_end - range_start)
+		#
+
 		return _return
 	#
 
@@ -223,12 +251,13 @@ Returns false if the streamer does not support seeking.
 		return False
 	#
 
-	def open_url(self, url):
+	def open_url(self, url, exclusive_id = None):
 	#
 		"""
 Opens a streamer session for the given URL.
 
 :param url: URL to be streamed
+:param exclusive_id: Closes all other streamers with them same exclusive ID.
 
 :return: (bool) True on success
 :since:  v0.1.00

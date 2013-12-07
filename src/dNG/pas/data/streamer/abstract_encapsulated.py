@@ -25,6 +25,7 @@ NOTE_END //n"""
 
 from collections import Iterator
 
+from dNG.pas.data.traced_exception import TracedException
 from .abstract import Abstract
 
 class AbstractEncapsulated(Iterator):
@@ -51,8 +52,8 @@ Constructor __init__(AbstractEncapsulated)
 :since: v0.1.00
 		"""
 
-		if (isinstance(streamer, Abstract)): self.streamer = streamer
-		else: raise RuntimeError("Given streamer is not supported", 22)
+		if (not isinstance(streamer, Abstract)): raise TracedException("Given streamer is not supported")
+		self.streamer = streamer
 	#
 
 	def __iter__(self):
@@ -83,7 +84,8 @@ python.org: Return the next item from the container.
 			self.close()
 			raise StopIteration()
 		#
-		else: return data
+
+		return data
 	#
 	next = __next__
 
@@ -202,18 +204,19 @@ Returns false if the streamer does not support seeking.
 		return self.streamer.supports_seeking()
 	#
 
-	def open_url(self, url):
+	def open_url(self, url, exclusive_id = None):
 	#
 		"""
 Opens a streamer session for the given URL.
 
 :param url: URL to be streamed
+:param exclusive_id: Closes all other streamers with them same exclusive ID.
 
 :return: (bool) True on success
 :since:  v0.1.00
 		"""
 
-		return self.streamer.open_url(url)
+		return self.streamer.open_url(url, exclusive_id)
 	#
 
 	def url_supported(self, url):
