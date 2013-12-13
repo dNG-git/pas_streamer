@@ -27,8 +27,12 @@ from os import path
 from weakref import ref
 import os
 
-try: from urllib.parse import urlsplit
-except ImportError: from urlparse import urlsplit
+try: from urllib.parse import unquote, urlsplit
+except ImportError:
+#
+	from urllib import unquote
+	from urlparse import urlsplit
+#
 
 from dNG.pas.data.binary import Binary
 from dNG.pas.data.mime_type import MimeType
@@ -274,7 +278,7 @@ Opens a streamer session for the given URL.
 
 		url_elements = urlsplit(url)
 
-		if (url_elements.scheme == "file"): return self._open(url_elements.path[1:], exclusive_id)
+		if (url_elements.scheme == "file"): return self._open(File._unescape_path(url_elements.path[1:]), exclusive_id)
 		else: return False
 	#
 
@@ -290,7 +294,22 @@ Returns true if the streamer is able to return data for the given URL.
 		"""
 
 		url_elements = urlsplit(url)
-		return (os.access(url_elements.path, os.R_OK) if (url_elements.scheme == "file") else False)
+		return (os.access(File._unescape_path(url_elements.path), os.R_OK) if (url_elements.scheme == "file") else False)
+	#
+
+	@staticmethod
+	def _unescape_path(url_elements_path):
+	#
+		"""
+Unescapes the path.
+
+:param url_elements_path: Escaped path from an URL
+
+:return: (str) Unescaped path
+:since:  v0.1.00
+		"""
+
+		return path.normpath(unquote(Binary.str(url_elements_path)))
 	#
 #
 
