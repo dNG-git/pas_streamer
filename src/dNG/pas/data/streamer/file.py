@@ -36,6 +36,9 @@ except ImportError:
 
 from dNG.pas.data.binary import Binary
 from dNG.pas.data.mime_type import MimeType
+from dNG.pas.data.settings import Settings
+from dNG.pas.data.tasks.memory import Memory
+from dNG.pas.tasks.callback import Callback
 from .abstract import Abstract
 import dNG.data.file
 
@@ -249,7 +252,7 @@ Opens a file session.
 						if (exclusive_id in Abstract.exclusive_streamers):
 						#
 							streamer = Abstract.exclusive_streamers[exclusive_id]()
-							if (streamer != None): streamer.close()
+							if (streamer != None): Memory.get_instance().task_add("dNG.pas.streamer.File.{0}".format(id(streamer)), Callback(streamer.close), int(Settings.get("pas_global_streamer_exclusive_grace_period", 2)))
 						#
 
 						Abstract.exclusive_streamers[exclusive_id] = ref(self)

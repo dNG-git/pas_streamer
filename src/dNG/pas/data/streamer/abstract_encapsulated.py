@@ -25,7 +25,7 @@ NOTE_END //n"""
 
 from collections import Iterator
 
-from dNG.pas.data.traced_exception import TracedException
+from dNG.pas.runtime.value_exception import ValueException
 from .abstract import Abstract
 
 class AbstractEncapsulated(Iterator):
@@ -52,7 +52,7 @@ Constructor __init__(AbstractEncapsulated)
 :since: v0.1.00
 		"""
 
-		if (not isinstance(streamer, Abstract)): raise TracedException("Given streamer is not supported")
+		if (not isinstance(streamer, Abstract)): raise ValueException("Given streamer is not supported")
 		self.streamer = streamer
 	#
 

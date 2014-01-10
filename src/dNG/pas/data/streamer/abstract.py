@@ -25,9 +25,9 @@ NOTE_END //n"""
 
 from collections import Iterator
 
-from dNG.pas.data.traced_exception import TracedException
 from dNG.pas.module.named_loader import NamedLoader
 from dNG.pas.runtime.instance_lock import InstanceLock
+from dNG.pas.runtime.not_implemented_exception import NotImplementedException
 from dNG.pas.runtime.thread_lock import ThreadLock
 
 class Abstract(Iterator):
@@ -45,13 +45,13 @@ interface is similar to a file one.
              Mozilla Public License, v. 2.0
 	"""
 
-	exclusive_streamers = { }
-	"""
-Weak references to active and exclusive streamers.
-	"""
 	exclusive_lock = InstanceLock()
 	"""
 Thread safety lock
+	"""
+	exclusive_streamers = { }
+	"""
+Weak references to active and exclusive streamers.
 	"""
 
 	def __init__(self, timeout_retries = 5):
@@ -136,7 +136,7 @@ Closes all related resource pointers for the active streamer session.
 :since: v0.1.00
 		"""
 
-		raise TracedException("Not implemented")
+		raise NotImplementedException()
 	#
 
 	def eof_check(self):
@@ -148,7 +148,7 @@ Checks if the resource has reached EOF.
 :since:  v0.1.00
 		"""
 
-		raise TracedException("Not implemented")
+		raise NotImplementedException()
 	#
 
 	def get_position(self):
@@ -187,7 +187,7 @@ Reads from the current streamer session.
 :since:  v0.1.00
 		"""
 
-		raise TracedException("Not implemented")
+		raise NotImplementedException()
 	#
 
 	def resource_check(self):
@@ -199,7 +199,7 @@ Returns true if the streamer resource is available.
 :since:  v0.1.00
 		"""
 
-		raise TracedException("Not implemented")
+		raise NotImplementedException()
 	#
 
 	def seek(self, offset):
