@@ -23,6 +23,9 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 NOTE_END //n"""
 
+# pylint: disable=abstract-method
+# pylint 1.1.0 was unable to detect next = __next__ correctly
+
 from collections import Iterator
 
 from dNG.pas.module.named_loader import NamedLoader
@@ -44,6 +47,8 @@ interface is similar to a file one.
 :license:    http://www.direct-netware.de/redirect.py?licenses;mpl2
              Mozilla Public License, v. 2.0
 	"""
+
+	# pylint: disable=unused-argument
 
 	exclusive_lock = InstanceLock()
 	"""
@@ -116,7 +121,7 @@ python.org: Return the next item from the container.
 
 		with self.lock:
 		#
-			if (self.streamer.eof_check()):
+			if (self.eof_check()):
 			#
 				self.close()
 				raise StopIteration()
