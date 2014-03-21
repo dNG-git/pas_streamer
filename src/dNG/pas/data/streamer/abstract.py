@@ -28,12 +28,13 @@ NOTE_END //n"""
 
 from collections import Iterator
 
+from dNG.pas.data.supports_mixin import SupportsMixin
 from dNG.pas.module.named_loader import NamedLoader
 from dNG.pas.runtime.instance_lock import InstanceLock
 from dNG.pas.runtime.not_implemented_exception import NotImplementedException
 from dNG.pas.runtime.thread_lock import ThreadLock
 
-class Abstract(Iterator):
+class Abstract(Iterator, SupportsMixin):
 #
 	"""
 The abstract streamer defines the to be implemented interface. A streamer
@@ -68,6 +69,8 @@ Constructor __init__(Abstract)
 
 :since: v0.1.00
 		"""
+
+		SupportsMixin.__init__(self)
 
 		self.lock = ThreadLock()
 		"""
@@ -237,23 +240,11 @@ Define a range to be streamed.
 
 		with self.lock:
 		#
-			_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.supports_seeking())) else False)
+			_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.is_supported("seeking"))) else False)
 			if (_return): self.stream_size = (1 + range_end - range_start)
 		#
 
 		return _return
-	#
-
-	def supports_seeking(self):
-	#
-		"""
-Returns false if the streamer does not support seeking.
-
-:return: (bool) True if the streamer supports seeking.
-:since:  v0.1.00
-		"""
-
-		return False
 	#
 
 	def open_url(self, url, exclusive_id = None):

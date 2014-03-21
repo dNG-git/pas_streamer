@@ -140,6 +140,20 @@ Returns the size in bytes.
 		return self.streamer.get_size()
 	#
 
+	def is_supported(self, feature):
+	#
+		"""
+Returns true if the feature requested is supported by this instance.
+
+:param feature: Feature name string
+
+:return: (bool) True if supported
+:since:  v0.1.01
+		"""
+
+		return self.streamer.is_supported(feature)
+	#
+
 	def read(self, _bytes = 4096):
 	#
 		"""
@@ -193,18 +207,6 @@ Seek to a given offset.
 		"""
 
 		return self.streamer.set_range(range_start, range_end)
-	#
-
-	def supports_seeking(self):
-	#
-		"""
-Returns false if the streamer does not support seeking.
-
-:return: (bool) True if the streamer supports seeking.
-:since:  v0.1.00
-		"""
-
-		return self.streamer.supports_seeking()
 	#
 
 	def open_url(self, url, exclusive_id = None):

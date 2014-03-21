@@ -72,10 +72,15 @@ Constructor __init__(File)
 		Abstract.__init__(self, timeout_retries)
 
 		self.file_pathname = None
+		"""
+Filename used by this streamer
+		"""
 		self.resource = None
 		"""
 Active file resource
 		"""
+
+		self.supported_features['seeking'] = True
 	#
 
 	def close(self):
@@ -209,18 +214,6 @@ Seek to a given offset.
 		#
 			return (False if (self.resource == None) else self.resource.seek(offset))
 		#
-	#
-
-	def supports_seeking(self):
-	#
-		"""
-Returns false if the streamer does not support seeking.
-
-:return: (bool) True if the streamer supports seeking.
-:since:  v0.1.00
-		"""
-
-		return True
 	#
 
 	def _open(self, file_pathname, exclusive_id):
