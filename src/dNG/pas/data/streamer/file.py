@@ -27,7 +27,6 @@ NOTE_END //n"""
 # pylint 1.1.0 was unable to detect next = __next__ correctly
 
 from os import path
-from weakref import ref
 import os
 
 try: from urllib.parse import unquote, urlsplit
@@ -40,8 +39,6 @@ except ImportError:
 from dNG.pas.data.binary import Binary
 from dNG.pas.data.mime_type import MimeType
 from dNG.pas.data.settings import Settings
-from dNG.pas.data.tasks.memory import Memory as MemoryTasks
-from dNG.pas.tasks.callback import Callback
 from .abstract import Abstract
 import dNG.data.file
 
@@ -79,6 +76,8 @@ Filename used by this streamer
 		"""
 Active file resource
 		"""
+
+		self.io_chunk_size = int(Settings.get("pas_global_io_chunk_size_local", 524288))
 
 		self.supported_features['seeking'] = True
 	#
@@ -151,7 +150,45 @@ Returns the size in bytes.
 		#
 	#
 
-	def read(self, _bytes = 65536):
+	def _is_file_access_allowed(self, file_pathname):
+	#
+		"""
+Checks if the file access is allowed for streaming.
+
+:param file_pathname: Path to the requested file
+
+:return: (bool) True if allowed
+:since:  v0.1.00
+		"""
+
+		_return = False
+
+		if (Settings.is_defined("pas_streamer_file_basedir_list")):
+		#
+			basedir_list = Settings.get("pas_streamer_file_basedir_list")
+
+			if (type(basedir_list) == list):
+			#
+				file_absolute_pathname = path.abspath(file_pathname)
+
+				for basedir in basedir_list:
+				#
+					if (file_absolute_pathname.startswith(basedir)):
+					#
+						_return = True
+						break
+					#
+				#
+
+				if ((not _return) and self.log_handler != None): self.log_handler.warning("streamer.File denied access to {0}".format(file_pathname))
+			#
+		#
+		else: _return = True
+
+		return _return
+	#
+
+	def read(self, _bytes = None):
 	#
 		"""
 Reads from the current streamer session.
@@ -162,6 +199,8 @@ Reads from the current streamer session.
 :return: (mixed) Data; None if EOF; False on error
 :since:  v0.1.00
 		"""
+
+		if (_bytes == None): _bytes = self.io_chunk_size
 
 		with self.lock:
 		#
@@ -213,23 +252,26 @@ Seek to a given offset.
 		#
 	#
 
-	def _open(self, file_pathname, exclusive_id):
+	def _open(self, file_pathname):
 	#
 		"""
 Opens a file session.
 
 :param file_pathname: Path to the requested file
-:param exclusive_id: Closes all other streamers with them same exclusive ID.
 
 :return: (bool) True on success
 :since:  v0.1.00
 		"""
 
+		_return = False
+
 		file_pathname = Binary.str(file_pathname)
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer._open({0}, +exclusive_id)- (#echo(__LINE__)#)".format(file_pathname))
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer._open({0})- (#echo(__LINE__)#)".format(file_pathname))
 
 		with self.lock:
 		#
+			self.file_pathname = None
+
 			if (self.resource == None):
 			#
 				url_ext = path.splitext(file_pathname)[1]
@@ -237,36 +279,27 @@ Opens a file session.
 
 				self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
 				_return = self.resource.open(file_pathname, True, ("r" if (mimetype_definition['class'] == "text") else "rb"))
-
-				if (_return and exclusive_id != None):
-				#
-					with Abstract.exclusive_lock:
-					#
-						if (exclusive_id in Abstract.exclusive_streamers):
-						#
-							streamer = Abstract.exclusive_streamers[exclusive_id]()
-							if (streamer != None): MemoryTasks.get_instance().task_add("dNG.pas.streamer.File.{0}".format(id(streamer)), Callback(streamer.close), int(Settings.get("pas_global_streamer_exclusive_grace_period", 2)))
-						#
-
-						Abstract.exclusive_streamers[exclusive_id] = ref(self)
-					#
-				#
 			#
-			else: _return = False
 
-			self.file_pathname = (file_pathname if (_return) else None)
+			if (_return): _return = self._is_file_access_allowed(file_pathname)
+
+			if (_return): self.file_pathname = file_pathname
+			elif (self.resource != None):
+			#
+				self.resource.close()
+				self.resource = None
+			#
 		#
 
 		return _return
 	#
 
-	def open_url(self, url, exclusive_id = None):
+	def open_url(self, url):
 	#
 		"""
 Opens a streamer session for the given URL.
 
 :param url: URL to be streamed
-:param exclusive_id: Closes all other streamers with them same exclusive ID.
 
 :return: (bool) True on success
 :since:  v0.1.00
@@ -274,7 +307,7 @@ Opens a streamer session for the given URL.
 
 		url_elements = urlsplit(url)
 
-		if (url_elements.scheme == "file"): return self._open(File._unescape_path(url_elements.path[1:]), exclusive_id)
+		if (url_elements.scheme == "file"): return self._open(File._unescape_path(url_elements.path[1:]))
 		else: return False
 	#
 

@@ -116,6 +116,18 @@ Checks if the resource has reached EOF.
 		return self.streamer.eof_check()
 	#
 
+	def get_io_chunk_size(self):
+	#
+		"""
+Returns the IO chunk size to be used for reading.
+
+:return: IO chunk size
+:since:  v0.1.00
+		"""
+
+		return self.streamer.get_io_chunk_size()
+	#
+
 	def get_position(self):
 	#
 		"""
@@ -154,7 +166,7 @@ Returns true if the feature requested is supported by this instance.
 		return self.streamer.is_supported(feature)
 	#
 
-	def read(self, _bytes = 4096):
+	def read(self, _bytes = None):
 	#
 		"""
 Reads from the current streamer session.
@@ -195,14 +207,28 @@ Seek to a given offset.
 		return self.streamer.seek(offset)
 	#
 
+	def set_io_chunk_size(self, chunk_size):
+	#
+		"""
+Sets the IO chunk size to be used for reading.
+
+:param chunk_size: IO chunk size
+
+:since: v0.1.00
+		"""
+
+		return self.streamer.set_io_chunk_size(chunk_size)
+	#
+
 	def set_range(self, range_start, range_end):
 	#
 		"""
-Seek to a given offset.
+Define a range to be streamed.
 
-:param offset: Seek to the given offset
+:param range_start: First byte of range
+:param range_end: Last byte of range
 
-:return: (bool) True on success
+:return: (bool) True if valid
 :since:  v0.1.00
 		"""
 

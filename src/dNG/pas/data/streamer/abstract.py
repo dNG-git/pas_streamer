@@ -30,7 +30,6 @@ from collections import Iterator
 
 from dNG.pas.data.supports_mixin import SupportsMixin
 from dNG.pas.module.named_loader import NamedLoader
-from dNG.pas.runtime.instance_lock import InstanceLock
 from dNG.pas.runtime.not_implemented_exception import NotImplementedException
 from dNG.pas.runtime.thread_lock import ThreadLock
 
@@ -51,15 +50,6 @@ interface is similar to a file one.
 
 	# pylint: disable=unused-argument
 
-	exclusive_lock = InstanceLock()
-	"""
-Thread safety lock
-	"""
-	exclusive_streamers = { }
-	"""
-Weak references to active and exclusive streamers.
-	"""
-
 	def __init__(self, timeout_retries = 5):
 	#
 		"""
@@ -72,6 +62,10 @@ Constructor __init__(Abstract)
 
 		SupportsMixin.__init__(self)
 
+		self.io_chunk_size = 65536
+		"""
+IO chunk size
+		"""
 		self.lock = ThreadLock()
 		"""
 Thread safety lock
@@ -159,6 +153,18 @@ Checks if the resource has reached EOF.
 		raise NotImplementedException()
 	#
 
+	def get_io_chunk_size(self):
+	#
+		"""
+Returns the IO chunk size to be used for reading.
+
+:return: IO chunk size
+:since:  v0.1.00
+		"""
+
+		return self.io_chunk_size
+	#
+
 	def get_position(self):
 	#
 		"""
@@ -224,6 +230,19 @@ Seek to a given offset.
 		return False
 	#
 
+	def set_io_chunk_size(self, chunk_size):
+	#
+		"""
+Sets the IO chunk size to be used for reading.
+
+:param chunk_size: IO chunk size
+
+:since: v0.1.00
+		"""
+
+		self.io_chunk_size = chunk_size
+	#
+
 	def set_range(self, range_start, range_end):
 	#
 		"""
@@ -247,13 +266,12 @@ Define a range to be streamed.
 		return _return
 	#
 
-	def open_url(self, url, exclusive_id = None):
+	def open_url(self, url):
 	#
 		"""
 Opens a streamer session for the given URL.
 
 :param url: URL to be streamed
-:param exclusive_id: Closes all other streamers with them same exclusive ID.
 
 :return: (bool) True on success
 :since:  v0.1.00
