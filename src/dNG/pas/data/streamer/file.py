@@ -91,7 +91,7 @@ Closes all related resource pointers for the active streamer session.
 :since: v0.1.00
 		"""
 
-		with self.lock:
+		with self._lock:
 		#
 			if (self.resource == None): _return = False
 			else:
@@ -105,21 +105,6 @@ Closes all related resource pointers for the active streamer session.
 		return _return
 	#
 
-	def eof_check(self):
-	#
-		"""
-Checks if the resource has reached EOF.
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		with self.lock:
-		#
-			return (True if (self.resource == None) else self.resource.eof_check())
-		#
-	#
-
 	def get_position(self):
 	#
 		"""
@@ -129,7 +114,7 @@ Returns the current offset.
 :since:  v0.1.00
 		"""
 
-		with self.lock:
+		with self._lock:
 		#
 			return (False if (self.resource == None) else self.resource.get_position())
 		#
@@ -144,9 +129,24 @@ Returns the size in bytes.
 :since:  v0.1.00
 		"""
 
-		with self.lock:
+		with self._lock:
 		#
 			return (False if (self.file_pathname == None) else os.stat(self.file_pathname).st_size)
+		#
+	#
+
+	def is_eof(self):
+	#
+		"""
+Checks if the resource has reached EOF.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		with self._lock:
+		#
+			return (True if (self.resource == None) else self.resource.is_eof())
 		#
 	#
 
@@ -188,6 +188,18 @@ Checks if the file access is allowed for streaming.
 		return _return
 	#
 
+	def is_resource_valid(self):
+	#
+		"""
+Returns true if the streamer resource is available.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		with self._lock: return (self.resource != None)
+	#
+
 	def read(self, _bytes = None):
 	#
 		"""
@@ -202,10 +214,10 @@ Reads from the current streamer session.
 
 		if (_bytes == None): _bytes = self.io_chunk_size
 
-		with self.lock:
+		with self._lock:
 		#
 			if (self.resource == None): _return = False
-			elif (self.resource.eof_check()): _return = None
+			elif (self.resource.is_eof()): _return = None
 			else:
 			#
 				if (self.stream_size > 0):
@@ -221,18 +233,6 @@ Reads from the current streamer session.
 		return _return
 	#
 
-	def resource_check(self):
-	#
-		"""
-Returns true if the streamer resource is available.
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		with self.lock: return (self.resource != None)
-	#
-
 	def seek(self, offset):
 	#
 		"""
@@ -246,7 +246,7 @@ Seek to a given offset.
 
 		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.seek({0:d})- (#echo(__LINE__)#)".format(offset))
 
-		with self.lock:
+		with self._lock:
 		#
 			return (False if (self.resource == None) else self.resource.seek(offset))
 		#
@@ -268,7 +268,7 @@ Opens a file session.
 		file_pathname = Binary.str(file_pathname)
 		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer._open({0})- (#echo(__LINE__)#)".format(file_pathname))
 
-		with self.lock:
+		with self._lock:
 		#
 			self.file_pathname = None
 

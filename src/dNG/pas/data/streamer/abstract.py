@@ -66,7 +66,7 @@ Constructor __init__(Abstract)
 		"""
 IO chunk size
 		"""
-		self.lock = ThreadLock()
+		self._lock = ThreadLock()
 		"""
 Thread safety lock
 		"""
@@ -116,9 +116,9 @@ python.org: Return the next item from the container.
 :since:  v0.1.00
 		"""
 
-		with self.lock:
+		with self._lock:
 		#
-			if (self.eof_check()):
+			if (self.is_eof()):
 			#
 				self.close()
 				raise StopIteration()
@@ -141,24 +141,12 @@ Closes all related resource pointers for the active streamer session.
 		raise NotImplementedException()
 	#
 
-	def eof_check(self):
-	#
-		"""
-Checks if the resource has reached EOF.
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		raise NotImplementedException()
-	#
-
 	def get_io_chunk_size(self):
 	#
 		"""
 Returns the IO chunk size to be used for reading.
 
-:return: IO chunk size
+:return: (int) IO chunk size
 :since:  v0.1.00
 		"""
 
@@ -189,27 +177,39 @@ Returns the size in bytes.
 		return False
 	#
 
-	def read(self, _bytes = 4096):
+	def is_eof(self):
 	#
 		"""
-Reads from the current streamer session.
+Checks if the resource has reached EOF.
 
-:param _bytes: How many bytes to read from the current position (0 means
-                  until EOF)
-
-:return: (mixed) Data; None if EOF; False on error
+:return: (bool) True on success
 :since:  v0.1.00
 		"""
 
 		raise NotImplementedException()
 	#
 
-	def resource_check(self):
+	def is_resource_valid(self):
 	#
 		"""
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		raise NotImplementedException()
+	#
+
+	def read(self, _bytes = 4096):
+	#
+		"""
+Reads from the current streamer session.
+
+:param _bytes: How many bytes to read from the current position (0 means
+               until EOF)
+
+:return: (mixed) Data; None if EOF; False on error
 :since:  v0.1.00
 		"""
 
@@ -257,7 +257,7 @@ Define a range to be streamed.
 
 		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.set_range({0:d}, {1:d})- (#echo(__LINE__)#)".format(range_start, range_end))
 
-		with self.lock:
+		with self._lock:
 		#
 			_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.is_supported("seeking"))) else False)
 			if (_return): self.stream_size = (1 + range_end - range_start)

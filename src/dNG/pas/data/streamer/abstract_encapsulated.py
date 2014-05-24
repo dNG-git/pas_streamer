@@ -104,24 +104,12 @@ Closes all related resource pointers for the active streamer session.
 		self.streamer.close()
 	#
 
-	def eof_check(self):
-	#
-		"""
-Checks if the resource has reached EOF.
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		return self.streamer.eof_check()
-	#
-
 	def get_io_chunk_size(self):
 	#
 		"""
 Returns the IO chunk size to be used for reading.
 
-:return: IO chunk size
+:return: (int) IO chunk size
 :since:  v0.1.00
 		"""
 
@@ -152,6 +140,30 @@ Returns the size in bytes.
 		return self.streamer.get_size()
 	#
 
+	def is_eof(self):
+	#
+		"""
+Checks if the resource has reached EOF.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		return self.streamer.is_eof()
+	#
+
+	def is_resource_valid(self):
+	#
+		"""
+Returns true if the streamer resource is available.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		return self.streamer.is_resource_valid()
+	#
+
 	def is_supported(self, feature):
 	#
 		"""
@@ -172,25 +184,13 @@ Returns true if the feature requested is supported by this instance.
 Reads from the current streamer session.
 
 :param _bytes: How many bytes to read from the current position (0 means
-                  until EOF)
+               until EOF)
 
 :return: (mixed) Data; None if EOF; False on error
 :since:  v0.1.00
 		"""
 
 		return self.streamer.read(_bytes)
-	#
-
-	def resource_check(self):
-	#
-		"""
-Returns true if the streamer resource is available.
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		return self.streamer.resource_check()
 	#
 
 	def seek(self, offset):
