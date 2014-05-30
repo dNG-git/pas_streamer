@@ -200,6 +200,21 @@ Returns true if the streamer resource is available.
 		with self._lock: return (self.resource != None)
 	#
 
+	def is_url_supported(self, url):
+	#
+		"""
+Returns true if the streamer is able to return data for the given URL.
+
+:param url: URL to be streamed
+
+:return: (bool) True if supported
+:since:  v0.1.00
+		"""
+
+		url_elements = urlsplit(url)
+		return (os.access(File._unescape_path(url_elements.path), os.R_OK) if (url_elements.scheme == "file") else False)
+	#
+
 	def read(self, _bytes = None):
 	#
 		"""
@@ -309,21 +324,6 @@ Opens a streamer session for the given URL.
 
 		if (url_elements.scheme == "file"): return self._open(File._unescape_path(url_elements.path[1:]))
 		else: return False
-	#
-
-	def url_supported(self, url):
-	#
-		"""
-Returns true if the streamer is able to return data for the given URL.
-
-:param url: URL to be streamed
-
-:return: (bool) True if supported
-:since:  v0.1.00
-		"""
-
-		url_elements = urlsplit(url)
-		return (os.access(File._unescape_path(url_elements.path), os.R_OK) if (url_elements.scheme == "file") else False)
 	#
 
 	@staticmethod

@@ -178,6 +178,20 @@ Returns true if the feature requested is supported by this instance.
 		return self.streamer.is_supported(feature)
 	#
 
+	def is_url_supported(self, url):
+	#
+		"""
+Returns true if the streamer is able to return data for the given URL.
+
+:param url: URL to be streamed
+
+:return: (bool) True if supported
+:since:  v0.1.00
+		"""
+
+		return self.streamer.is_url_supported(url)
+	#
+
 	def read(self, _bytes = None):
 	#
 		"""
@@ -248,20 +262,6 @@ Opens a streamer session for the given URL.
 		"""
 
 		return self.streamer.open_url(url, exclusive_id)
-	#
-
-	def url_supported(self, url):
-	#
-		"""
-Returns true if the streamer is able to return data for the given URL.
-
-:param url: URL to be streamed
-
-:return: (bool) True if supported
-:since:  v0.1.00
-		"""
-
-		return self.streamer.url_supported(url)
 	#
 #
 

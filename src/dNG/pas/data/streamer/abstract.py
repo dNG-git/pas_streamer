@@ -201,6 +201,20 @@ Returns true if the streamer resource is available.
 		raise NotImplementedException()
 	#
 
+	def is_url_supported(self, url):
+	#
+		"""
+Returns true if the streamer is able to return data for the given URL.
+
+:param url: URL to be streamed
+
+:return: (bool) True if supported
+:since:  v0.1.00
+		"""
+
+		return False
+	#
+
 	def read(self, _bytes = 4096):
 	#
 		"""
@@ -260,7 +274,7 @@ Define a range to be streamed.
 		with self._lock:
 		#
 			_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.is_supported("seeking"))) else False)
-			if (_return): self.stream_size = (1 + range_end - range_start)
+			if (_return): self.stream_size = 1 + (range_end - range_start)
 		#
 
 		return _return
@@ -274,20 +288,6 @@ Opens a streamer session for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		return False
-	#
-
-	def url_supported(self, url):
-	#
-		"""
-Returns true if the streamer is able to return data for the given URL.
-
-:param url: URL to be streamed
-
-:return: (bool) True if supported
 :since:  v0.1.00
 		"""
 
