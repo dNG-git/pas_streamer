@@ -23,11 +23,7 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 NOTE_END //n"""
 
-# pylint: disable=abstract-method
-# pylint 1.1.0 was unable to detect next = __next__ correctly
-
-from collections import Iterator
-
+from dNG.pas.runtime.iterator import Iterator
 from dNG.pas.runtime.value_exception import ValueException
 from .abstract import Abstract
 
@@ -90,7 +86,6 @@ python.org: Return the next item from the container.
 
 		return data
 	#
-	next = __next__
 
 	def close(self):
 	#

@@ -23,13 +23,9 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 NOTE_END //n"""
 
-# pylint: disable=abstract-method
-# pylint 1.1.0 was unable to detect next = __next__ correctly
-
-from collections import Iterator
-
 from dNG.pas.data.supports_mixin import SupportsMixin
 from dNG.pas.module.named_loader import NamedLoader
+from dNG.pas.runtime.iterator import Iterator
 from dNG.pas.runtime.not_implemented_exception import NotImplementedException
 from dNG.pas.runtime.thread_lock import ThreadLock
 
@@ -127,7 +123,6 @@ python.org: Return the next item from the container.
 			return self.read()
 		#
 	#
-	next = __next__
 
 	def close(self):
 	#
