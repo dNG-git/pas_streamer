@@ -2,10 +2,6 @@
 ##j## BOF
 
 """
-dNG.pas.data.streamer.abstract
-"""
-"""n// NOTE
-----------------------------------------------------------------------------
 direct PAS
 Python Application Services
 ----------------------------------------------------------------------------
@@ -20,8 +16,7 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 #echo(pasStreamerVersion)#
 #echo(__FILEPATH__)#
-----------------------------------------------------------------------------
-NOTE_END //n"""
+"""
 
 from dNG.pas.data.supports_mixin import SupportsMixin
 from dNG.pas.module.named_loader import NamedLoader
@@ -70,7 +65,7 @@ Thread safety lock
 		"""
 Retries before timing out
 		"""
-		self.stream_size = 0
+		self.stream_size = -1
 		"""
 Requested stream size
 		"""
@@ -89,18 +84,6 @@ Destructor __del__(Abstract)
 		"""
 
 		self.close()
-	#
-
-	def __iter__(self):
-	#
-		"""
-python.org: Return an iterator object.
-
-:return: (object) Iterator object
-:since:  v0.1.00
-		"""
-
-		return self
 	#
 
 	def __next__(self):
@@ -153,11 +136,11 @@ Returns the IO chunk size to be used for reading.
 		"""
 Returns the current offset.
 
-:return: (int) Offset; False on error
+:return: (int) Offset
 :since:  v0.1.00
 		"""
 
-		return False
+		raise NotImplementedException()
 	#
 
 	def get_size(self):
@@ -165,11 +148,11 @@ Returns the current offset.
 		"""
 Returns the size in bytes.
 
-:return: (int) Size in bytes; False on error
+:return: (int) Size in bytes
 :since:  v0.1.00
 		"""
 
-		return False
+		raise NotImplementedException()
 	#
 
 	def is_eof(self):
@@ -177,7 +160,7 @@ Returns the size in bytes.
 		"""
 Checks if the resource has reached EOF.
 
-:return: (bool) True on success
+:return: (bool) True if EOF
 :since:  v0.1.00
 		"""
 
@@ -193,7 +176,7 @@ Returns true if the streamer resource is available.
 :since:  v0.1.00
 		"""
 
-		raise NotImplementedException()
+		return False
 	#
 
 	def is_url_supported(self, url):
@@ -218,7 +201,7 @@ Reads from the current streamer session.
 :param _bytes: How many bytes to read from the current position (0 means
                until EOF)
 
-:return: (mixed) Data; None if EOF; False on error
+:return: (mixed) Data; None if EOF
 :since:  v0.1.00
 		"""
 
@@ -264,11 +247,19 @@ Define a range to be streamed.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.set_range({0:d}, {1:d})- (#echo(__LINE__)#)".format(range_start, range_end))
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_range({1:d}, {2:d})- (#echo(__LINE__)#)", self, range_start, range_end, context = "pas_streamer")
+		_return = False
 
 		with self._lock:
 		#
-			_return = (self.seek(range_start) if (range_start >= 0 and range_start <= range_end and (range_start < 1 or self.is_supported("seeking"))) else False)
+			if (range_start >= 0 and range_start <= range_end):
+			#
+				position = self.get_position()
+
+				if (position == range_start): _return = True
+				elif (self.is_supported("seeking")): _return = self.seek(range_start)
+			#
+
 			if (_return): self.stream_size = 1 + (range_end - range_start)
 		#
 

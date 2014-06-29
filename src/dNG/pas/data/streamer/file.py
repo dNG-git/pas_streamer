@@ -2,10 +2,6 @@
 ##j## BOF
 
 """
-dNG.pas.data.streamer.abstract
-"""
-"""n// NOTE
-----------------------------------------------------------------------------
 direct PAS
 Python Application Services
 ----------------------------------------------------------------------------
@@ -20,8 +16,7 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 #echo(pasStreamerVersion)#
 #echo(__FILEPATH__)#
-----------------------------------------------------------------------------
-NOTE_END //n"""
+"""
 
 # pylint: disable=import-error,no-name-in-module
 
@@ -38,6 +33,7 @@ except ImportError:
 from dNG.pas.data.binary import Binary
 from dNG.pas.data.mime_type import MimeType
 from dNG.pas.data.settings import Settings
+from dNG.pas.runtime.io_exception import IOException
 from .abstract import Abstract
 import dNG.data.file
 
@@ -95,7 +91,7 @@ Closes all related resource pointers for the active streamer session.
 			if (self.resource == None): _return = False
 			else:
 			#
-				if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.close()- (#echo(__LINE__)#)")
+				if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 				_return = self.resource.close()
 				self.resource = None
 			#
@@ -109,13 +105,14 @@ Closes all related resource pointers for the active streamer session.
 		"""
 Returns the current offset.
 
-:return: (int) Offset; False on error
+:return: (int) Offset
 :since:  v0.1.00
 		"""
 
 		with self._lock:
 		#
-			return (False if (self.resource == None) else self.resource.get_position())
+			if (self.resource == None): raise IOException("Streamer resource is invalid")
+			return self.resource.get_position()
 		#
 	#
 
@@ -124,13 +121,14 @@ Returns the current offset.
 		"""
 Returns the size in bytes.
 
-:return: (int) Size in bytes; False on error
+:return: (int) Size in bytes
 :since:  v0.1.00
 		"""
 
 		with self._lock:
 		#
-			return (False if (self.file_pathname == None) else os.stat(self.file_pathname).st_size)
+			if (self.file_pathname == None): raise IOException("Streamer resource is invalid")
+			return os.stat(self.file_pathname).st_size
 		#
 	#
 
@@ -139,7 +137,7 @@ Returns the size in bytes.
 		"""
 Checks if the resource has reached EOF.
 
-:return: (bool) True on success
+:return: (bool) True if EOF
 :since:  v0.1.00
 		"""
 
@@ -179,7 +177,7 @@ Checks if the file access is allowed for streaming.
 					#
 				#
 
-				if ((not _return) and self.log_handler != None): self.log_handler.warning("streamer.File denied access to {0}".format(file_pathname))
+				if ((not _return) and self.log_handler != None): self.log_handler.warning("streamer.File denied access to {0}", file_pathname, context = "pas_streamer")
 			#
 		#
 		else: _return = True
@@ -222,25 +220,31 @@ Reads from the current streamer session.
 :param bytes: How many bytes to read from the current position (0 means
               until EOF)
 
-:return: (mixed) Data; None if EOF; False on error
+:return: (mixed) Data; None if EOF
 :since:  v0.1.00
 		"""
 
 		if (_bytes == None): _bytes = self.io_chunk_size
+		_return = None
 
-		with self._lock:
-		#
-			if (self.resource == None): _return = False
-			elif (self.resource.is_eof()): _return = None
-			else:
+		if (self.resource == None): raise IOException("Streamer resource is invalid")
+		elif (self.stream_size != 0 and (not self.resource.is_eof())):
+		# Thread safety
+			with self._lock:
 			#
-				if (self.stream_size > 0):
-				#
-					if (_bytes > self.stream_size): _bytes = self.stream_size
-					self.stream_size -= _bytes
-				#
+				is_size_limited = (self.stream_size > 0)
 
-				_return = (self.resource.read(_bytes) if (_bytes > 0) else None)
+				if (self.resource == None): raise IOException("Streamer resource is invalid")
+				elif ((self.stream_size < 0 or is_size_limited) and (not self.resource.is_eof())):
+				#
+					if (is_size_limited):
+					#
+						if (_bytes > self.stream_size): _bytes = self.stream_size
+						self.stream_size -= _bytes
+					#
+
+					_return = (self.resource.read(_bytes) if (_bytes > 0) else None)
+				#
 			#
 		#
 
@@ -258,7 +262,7 @@ Seek to a given offset.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer.seek({0:d})- (#echo(__LINE__)#)".format(offset))
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
 
 		with self._lock:
 		#
@@ -280,7 +284,7 @@ Opens a file session.
 		_return = False
 
 		file_pathname = Binary.str(file_pathname)
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -Streamer._open({0})- (#echo(__LINE__)#)".format(file_pathname))
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}._open({1})- (#echo(__LINE__)#)", self, file_pathname, context = "pas_streamer")
 
 		with self._lock:
 		#

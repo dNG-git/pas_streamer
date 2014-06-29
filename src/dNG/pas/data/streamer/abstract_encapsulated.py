@@ -2,10 +2,6 @@
 ##j## BOF
 
 """
-dNG.pas.data.streamer.abstract_encapsulated
-"""
-"""n// NOTE
-----------------------------------------------------------------------------
 direct PAS
 Python Application Services
 ----------------------------------------------------------------------------
@@ -20,8 +16,7 @@ http://www.direct-netware.de/redirect.py?licenses;mpl2
 ----------------------------------------------------------------------------
 #echo(pasStreamerVersion)#
 #echo(__FILEPATH__)#
-----------------------------------------------------------------------------
-NOTE_END //n"""
+"""
 
 from dNG.pas.runtime.iterator import Iterator
 from dNG.pas.runtime.value_exception import ValueException
@@ -53,18 +48,6 @@ Constructor __init__(AbstractEncapsulated)
 
 		if (not isinstance(streamer, Abstract)): raise ValueException("Given streamer is not supported")
 		self.streamer = streamer
-	#
-
-	def __iter__(self):
-	#
-		"""
-python.org: Return an iterator object.
-
-:return: (object) Iterator object
-:since:  v0.1.00
-		"""
-
-		return self
 	#
 
 	def __next__(self):
@@ -116,7 +99,7 @@ Returns the IO chunk size to be used for reading.
 		"""
 Returns the current offset.
 
-:return: (int) Offset; False on error
+:return: (int) Offset
 :since:  v0.1.00
 		"""
 
@@ -128,7 +111,7 @@ Returns the current offset.
 		"""
 Returns the size in bytes.
 
-:return: (int) Size in bytes; False on error
+:return: (int) Size in bytes
 :since:  v0.1.00
 		"""
 
@@ -140,7 +123,7 @@ Returns the size in bytes.
 		"""
 Checks if the resource has reached EOF.
 
-:return: (bool) True on success
+:return: (bool) True if EOF
 :since:  v0.1.00
 		"""
 
@@ -195,7 +178,7 @@ Reads from the current streamer session.
 :param _bytes: How many bytes to read from the current position (0 means
                until EOF)
 
-:return: (mixed) Data; None if EOF; False on error
+:return: (mixed) Data; None if EOF
 :since:  v0.1.00
 		"""
 
