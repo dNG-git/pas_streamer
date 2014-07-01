@@ -220,7 +220,7 @@ Reads from the current streamer session.
 :param bytes: How many bytes to read from the current position (0 means
               until EOF)
 
-:return: (mixed) Data; None if EOF
+:return: (bytes) Data; None if EOF
 :since:  v0.1.00
 		"""
 
@@ -292,11 +292,8 @@ Opens a file session.
 
 			if (self.resource == None):
 			#
-				url_ext = path.splitext(file_pathname)[1]
-				mimetype_definition = MimeType.get_instance().get(url_ext[1:])
-
 				self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
-				_return = self.resource.open(file_pathname, True, ("r" if (mimetype_definition['class'] == "text") else "rb"))
+				_return = self.resource.open(file_pathname, True, "rb")
 			#
 
 			if (_return): _return = self._is_file_access_allowed(file_pathname)

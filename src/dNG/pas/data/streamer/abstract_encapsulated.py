@@ -22,7 +22,7 @@ from dNG.pas.runtime.iterator import Iterator
 from dNG.pas.runtime.value_exception import ValueException
 from .abstract import Abstract
 
-class AbstractEncapsulated(Iterator):
+class AbstractEncapsulated(Abstract, Iterator):
 #
 	"""
 The abstract streamer encapsulates another streamer for transforming it.
@@ -47,7 +47,13 @@ Constructor __init__(AbstractEncapsulated)
 		"""
 
 		if (not isinstance(streamer, Abstract)): raise ValueException("Given streamer is not supported")
+
+		Abstract.__init__(self)
+
 		self.streamer = streamer
+		"""
+Encapsulated streamer instance
+		"""
 	#
 
 	def __next__(self):
@@ -55,13 +61,13 @@ Constructor __init__(AbstractEncapsulated)
 		"""
 python.org: Return the next item from the container.
 
-:return: (str) Response data
+:return: (bytes) Response data
 :since:  v0.1.00
 		"""
 
 		data = self.read()
 
-		if (data == None or data == False):
+		if (data == None):
 		#
 			self.close()
 			raise StopIteration()
@@ -178,7 +184,7 @@ Reads from the current streamer session.
 :param _bytes: How many bytes to read from the current position (0 means
                until EOF)
 
-:return: (mixed) Data; None if EOF
+:return: (bytes) Data; None if EOF
 :since:  v0.1.00
 		"""
 

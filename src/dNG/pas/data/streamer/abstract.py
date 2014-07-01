@@ -91,7 +91,7 @@ Destructor __del__(Abstract)
 		"""
 python.org: Return the next item from the container.
 
-:return: (str) Response data
+:return: (bytes) Response data
 :since:  v0.1.00
 		"""
 
@@ -201,7 +201,7 @@ Reads from the current streamer session.
 :param _bytes: How many bytes to read from the current position (0 means
                until EOF)
 
-:return: (mixed) Data; None if EOF
+:return: (bytes) Data; None if EOF
 :since:  v0.1.00
 		"""
 
