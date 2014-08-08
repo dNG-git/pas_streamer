@@ -209,7 +209,7 @@ Returns true if the streamer is able to return data for the given URL.
 		"""
 
 		url_elements = urlsplit(url)
-		return (os.access(File._unescape_path(url_elements.path), os.R_OK) if (url_elements.scheme == "file") else False)
+		return (os.access(File._unescape_path(url_elements.path[1:]), os.R_OK) if (url_elements.scheme == "file") else False)
 	#
 
 	def read(self, _bytes = None):
