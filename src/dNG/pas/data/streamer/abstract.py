@@ -193,7 +193,7 @@ Returns true if the streamer is able to return data for the given URL.
 		return False
 	#
 
-	def read(self, _bytes = 4096):
+	def read(self, _bytes = None):
 	#
 		"""
 Reads from the current streamer session.

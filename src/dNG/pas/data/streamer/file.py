@@ -31,7 +31,6 @@ except ImportError:
 #
 
 from dNG.pas.data.binary import Binary
-from dNG.pas.data.mime_type import MimeType
 from dNG.pas.data.settings import Settings
 from dNG.pas.runtime.io_exception import IOException
 from .abstract import Abstract
@@ -224,8 +223,9 @@ Reads from the current streamer session.
 :since:  v0.1.00
 		"""
 
-		if (_bytes == None): _bytes = self.io_chunk_size
 		_return = None
+
+		if (_bytes == None): _bytes = self.io_chunk_size
 
 		if (self.resource == None): raise IOException("Streamer resource is invalid")
 		elif (self.stream_size != 0 and (not self.resource.is_eof())):
