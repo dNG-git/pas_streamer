@@ -62,7 +62,7 @@ Constructor __init__(File)
 
 		Abstract.__init__(self, timeout_retries)
 
-		self.file_pathname = None
+		self.file_path_name = None
 		"""
 Filename used by this streamer
 		"""
@@ -99,22 +99,6 @@ Closes all related resource pointers for the active streamer session.
 		return _return
 	#
 
-	def get_position(self):
-	#
-		"""
-Returns the current offset.
-
-:return: (int) Offset
-:since:  v0.1.00
-		"""
-
-		with self._lock:
-		#
-			if (self.resource == None): raise IOException("Streamer resource is invalid")
-			return self.resource.get_position()
-		#
-	#
-
 	def get_size(self):
 	#
 		"""
@@ -126,8 +110,8 @@ Returns the size in bytes.
 
 		with self._lock:
 		#
-			if (self.file_pathname == None): raise IOException("Streamer resource is invalid")
-			return os.stat(self.file_pathname).st_size
+			if (self.file_path_name == None): raise IOException("Streamer resource is invalid")
+			return os.stat(self.file_path_name).st_size
 		#
 	#
 
@@ -146,12 +130,12 @@ Checks if the resource has reached EOF.
 		#
 	#
 
-	def _is_file_access_allowed(self, file_pathname):
+	def _is_file_access_allowed(self, file_path_name):
 	#
 		"""
 Checks if the file access is allowed for streaming.
 
-:param file_pathname: Path to the requested file
+:param file_path_name: Path to the requested file
 
 :return: (bool) True if allowed
 :since:  v0.1.00
@@ -165,18 +149,18 @@ Checks if the file access is allowed for streaming.
 
 			if (type(basedir_list) == list):
 			#
-				file_absolute_pathname = path.abspath(file_pathname)
+				file_absolute_path_name = path.abspath(file_path_name)
 
 				for basedir in basedir_list:
 				#
-					if (file_absolute_pathname.startswith(basedir)):
+					if (file_absolute_path_name.startswith(basedir)):
 					#
 						_return = True
 						break
 					#
 				#
 
-				if ((not _return) and self.log_handler != None): self.log_handler.warning("streamer.File denied access to {0}", file_pathname, context = "pas_streamer")
+				if ((not _return) and self.log_handler != None): self.log_handler.warning("streamer.File denied access to {0}", file_path_name, context = "pas_streamer")
 			#
 		#
 		else: _return = True
@@ -209,6 +193,62 @@ Returns true if the streamer is able to return data for the given URL.
 
 		url_elements = urlsplit(url)
 		return (os.access(File._unescape_path(url_elements.path[1:]), os.R_OK) if (url_elements.scheme == "file") else False)
+	#
+
+	def _open(self, file_path_name):
+	#
+		"""
+Opens a file session.
+
+:param file_path_name: Path to the requested file
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		_return = False
+
+		file_path_name = Binary.str(file_path_name)
+		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}._open({1})- (#echo(__LINE__)#)", self, file_path_name, context = "pas_streamer")
+
+		with self._lock:
+		#
+			self.file_path_name = None
+
+			if (self.resource == None):
+			#
+				self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
+				_return = self.resource.open(file_path_name, True, "rb")
+			#
+
+			if (_return): _return = self._is_file_access_allowed(file_path_name)
+
+			if (_return): self.file_path_name = file_path_name
+			elif (self.resource != None):
+			#
+				self.resource.close()
+				self.resource = None
+			#
+		#
+
+		return _return
+	#
+
+	def open_url(self, url):
+	#
+		"""
+Opens a streamer session for the given URL.
+
+:param url: URL to be streamed
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		url_elements = urlsplit(url)
+
+		if (url_elements.scheme == "file"): return self._open(File._unescape_path(url_elements.path[1:]))
+		else: return False
 	#
 
 	def read(self, _bytes = None):
@@ -270,60 +310,20 @@ Seek to a given offset.
 		#
 	#
 
-	def _open(self, file_pathname):
+	def tell(self):
 	#
 		"""
-Opens a file session.
+Returns the current offset.
 
-:param file_pathname: Path to the requested file
-
-:return: (bool) True on success
-:since:  v0.1.00
+:return: (int) Offset
+:since:  v0.1.02
 		"""
-
-		_return = False
-
-		file_pathname = Binary.str(file_pathname)
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}._open({1})- (#echo(__LINE__)#)", self, file_pathname, context = "pas_streamer")
 
 		with self._lock:
 		#
-			self.file_pathname = None
-
-			if (self.resource == None):
-			#
-				self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
-				_return = self.resource.open(file_pathname, True, "rb")
-			#
-
-			if (_return): _return = self._is_file_access_allowed(file_pathname)
-
-			if (_return): self.file_pathname = file_pathname
-			elif (self.resource != None):
-			#
-				self.resource.close()
-				self.resource = None
-			#
+			if (self.resource == None): raise IOException("Streamer resource is invalid")
+			return self.resource.tell()
 		#
-
-		return _return
-	#
-
-	def open_url(self, url):
-	#
-		"""
-Opens a streamer session for the given URL.
-
-:param url: URL to be streamed
-
-:return: (bool) True on success
-:since:  v0.1.00
-		"""
-
-		url_elements = urlsplit(url)
-
-		if (url_elements.scheme == "file"): return self._open(File._unescape_path(url_elements.path[1:]))
-		else: return False
 	#
 
 	@staticmethod

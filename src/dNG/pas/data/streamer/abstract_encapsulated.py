@@ -100,18 +100,6 @@ Returns the IO chunk size to be used for reading.
 		return self.streamer.get_io_chunk_size()
 	#
 
-	def get_position(self):
-	#
-		"""
-Returns the current offset.
-
-:return: (int) Offset
-:since:  v0.1.00
-		"""
-
-		return self.streamer.get_position()
-	#
-
 	def get_size(self):
 	#
 		"""
@@ -176,6 +164,21 @@ Returns true if the streamer is able to return data for the given URL.
 		return self.streamer.is_url_supported(url)
 	#
 
+	def open_url(self, url, exclusive_id = None):
+	#
+		"""
+Opens a streamer session for the given URL.
+
+:param url: URL to be streamed
+:param exclusive_id: Closes all other streamers with them same exclusive ID.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		return self.streamer.open_url(url, exclusive_id)
+	#
+
 	def read(self, _bytes = None):
 	#
 		"""
@@ -233,19 +236,16 @@ Define a range to be streamed.
 		return self.streamer.set_range(range_start, range_end)
 	#
 
-	def open_url(self, url, exclusive_id = None):
+	def tell(self):
 	#
 		"""
-Opens a streamer session for the given URL.
+Returns the current offset.
 
-:param url: URL to be streamed
-:param exclusive_id: Closes all other streamers with them same exclusive ID.
-
-:return: (bool) True on success
-:since:  v0.1.00
+:return: (int) Offset
+:since:  v0.1.02
 		"""
 
-		return self.streamer.open_url(url, exclusive_id)
+		return self.streamer.tell()
 	#
 #
 
