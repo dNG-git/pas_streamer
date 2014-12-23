@@ -69,7 +69,7 @@ Retries before timing out
 		"""
 Requested stream size
 		"""
-		self.timeout_retries = (5 if (timeout_retries == None) else timeout_retries)
+		self.timeout_retries = (5 if (timeout_retries is None) else timeout_retries)
 		"""
 Retries before timing out
 		"""
@@ -249,7 +249,7 @@ Define a range to be streamed.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_range({1:d}, {2:d})- (#echo(__LINE__)#)", self, range_start, range_end, context = "pas_streamer")
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_range({1:d}, {2:d})- (#echo(__LINE__)#)", self, range_start, range_end, context = "pas_streamer")
 		_return = False
 
 		with self._lock:

@@ -80,10 +80,10 @@ Closes all related resource pointers for the active streamer session.
 
 		with self._lock:
 		#
-			if (self.resource == None): _return = False
+			if (self.resource is None): _return = False
 			else:
 			#
-				if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
+				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 				_return = self.resource.close()
 				self.resource = None
 			#
@@ -103,7 +103,7 @@ Returns the size in bytes.
 
 		with self._lock:
 		#
-			if (self.size == None): raise IOException("Streamer resource size is not defined")
+			if (self.size is None): raise IOException("Streamer resource size is not defined")
 			return self.size
 		#
 	#
@@ -119,7 +119,7 @@ Checks if the resource has reached EOF.
 
 		with self._lock:
 		#
-			return (True if (self.resource == None) else self.resource.is_eof())
+			return (True if (self.resource is None) else self.resource.is_eof())
 		#
 	#
 
@@ -132,7 +132,7 @@ Returns true if the streamer resource is available.
 :since:  v0.1.00
 		"""
 
-		return (self.resource != None)
+		return (self.resource is not None)
 	#
 
 	def is_url_supported(self, url):
@@ -162,11 +162,11 @@ Reads from the current streamer session.
 :since:  v0.1.00
 		"""
 
-		if (_bytes == None): _bytes = self.io_chunk_size
+		if (_bytes is None): _bytes = self.io_chunk_size
 
 		with self._lock:
 		#
-			if (self.resource == None): raise IOException("Streamer resource is invalid")
+			if (self.resource is None): raise IOException("Streamer resource is invalid")
 			return (self.resource.read() if (_bytes < 1) else self.resource.read(_bytes))
 		#
 	#
@@ -182,11 +182,11 @@ Seek to a given offset.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
 
 		with self._lock:
 		#
-			return (False if (self.resource == None) else self.resource.seek(offset))
+			return (False if (self.resource is None) else self.resource.seek(offset))
 		#
 	#
 
@@ -200,7 +200,7 @@ Sets the file-like resource to be used.
 :since: v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 
 		with self._lock: self.resource = resource
 	#
@@ -215,7 +215,7 @@ Seek to a given offset.
 :since: v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
 
 		self.size = size
 	#
@@ -229,7 +229,7 @@ seeking.
 :since: v0.1.00
 		"""
 
-		return (self.size != None)
+		return (self.size is not None)
 	#
 
 	def tell(self):
@@ -243,7 +243,7 @@ Returns the current offset.
 
 		with self._lock:
 		#
-			if (self.resource == None): raise IOException("Streamer resource is invalid")
+			if (self.resource is None): raise IOException("Streamer resource is invalid")
 			return self.resource.tell()
 		#
 	#

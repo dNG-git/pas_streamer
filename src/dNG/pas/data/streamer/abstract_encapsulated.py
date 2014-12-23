@@ -67,7 +67,7 @@ python.org: Return the next item from the container.
 
 		data = self.read()
 
-		if (data == None):
+		if (data is None):
 		#
 			self.close()
 			raise StopIteration()

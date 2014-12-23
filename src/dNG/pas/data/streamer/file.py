@@ -87,10 +87,10 @@ Closes all related resource pointers for the active streamer session.
 
 		with self._lock:
 		#
-			if (self.resource == None): _return = False
+			if (self.resource is None): _return = False
 			else:
 			#
-				if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
+				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 				_return = self.resource.close()
 				self.resource = None
 			#
@@ -110,7 +110,7 @@ Returns the size in bytes.
 
 		with self._lock:
 		#
-			if (self.file_path_name == None): raise IOException("Streamer resource is invalid")
+			if (self.file_path_name is None): raise IOException("Streamer resource is invalid")
 			return os.stat(self.file_path_name).st_size
 		#
 	#
@@ -126,7 +126,7 @@ Checks if the resource has reached EOF.
 
 		with self._lock:
 		#
-			return (True if (self.resource == None) else self.resource.is_eof())
+			return (True if (self.resource is None) else self.resource.is_eof())
 		#
 	#
 
@@ -160,7 +160,7 @@ Checks if the file access is allowed for streaming.
 					#
 				#
 
-				if ((not _return) and self.log_handler != None): self.log_handler.warning("streamer.File denied access to {0}", file_path_name, context = "pas_streamer")
+				if ((not _return) and self.log_handler is not None): self.log_handler.warning("streamer.File denied access to {0}", file_path_name, context = "pas_streamer")
 			#
 		#
 		else: _return = True
@@ -177,7 +177,7 @@ Returns true if the streamer resource is available.
 :since:  v0.1.00
 		"""
 
-		with self._lock: return (self.resource != None)
+		with self._lock: return (self.resource is not None)
 	#
 
 	def is_url_supported(self, url):
@@ -209,13 +209,13 @@ Opens a file session.
 		_return = False
 
 		file_path_name = Binary.str(file_path_name)
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}._open({1})- (#echo(__LINE__)#)", self, file_path_name, context = "pas_streamer")
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}._open({1})- (#echo(__LINE__)#)", self, file_path_name, context = "pas_streamer")
 
 		with self._lock:
 		#
 			self.file_path_name = None
 
-			if (self.resource == None):
+			if (self.resource is None):
 			#
 				self.resource = dNG.data.file.File(timeout_retries = self.timeout_retries)
 				_return = self.resource.open(file_path_name, True, "rb")
@@ -224,7 +224,7 @@ Opens a file session.
 			if (_return): _return = self._is_file_access_allowed(file_path_name)
 
 			if (_return): self.file_path_name = file_path_name
-			elif (self.resource != None):
+			elif (self.resource is not None):
 			#
 				self.resource.close()
 				self.resource = None
@@ -265,16 +265,16 @@ Reads from the current streamer session.
 
 		_return = None
 
-		if (_bytes == None): _bytes = self.io_chunk_size
+		if (_bytes is None): _bytes = self.io_chunk_size
 
-		if (self.resource == None): raise IOException("Streamer resource is invalid")
+		if (self.resource is None): raise IOException("Streamer resource is invalid")
 		elif (self.stream_size != 0 and (not self.resource.is_eof())):
 		# Thread safety
 			with self._lock:
 			#
 				is_size_limited = (self.stream_size > 0)
 
-				if (self.resource == None): raise IOException("Streamer resource is invalid")
+				if (self.resource is None): raise IOException("Streamer resource is invalid")
 				elif ((self.stream_size < 0 or is_size_limited) and (not self.resource.is_eof())):
 				#
 					if (is_size_limited):
@@ -302,11 +302,11 @@ Seek to a given offset.
 :since:  v0.1.00
 		"""
 
-		if (self.log_handler != None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
 
 		with self._lock:
 		#
-			return (False if (self.resource == None) else self.resource.seek(offset))
+			return (False if (self.resource is None) else self.resource.seek(offset))
 		#
 	#
 
@@ -321,7 +321,7 @@ Returns the current offset.
 
 		with self._lock:
 		#
-			if (self.resource == None): raise IOException("Streamer resource is invalid")
+			if (self.resource is None): raise IOException("Streamer resource is invalid")
 			return self.resource.tell()
 		#
 	#
