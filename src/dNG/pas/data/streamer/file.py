@@ -147,7 +147,7 @@ Checks if the file access is allowed for streaming.
 		#
 			basedir_list = Settings.get("pas_streamer_file_basedir_list")
 
-			if (type(basedir_list) == list):
+			if (type(basedir_list) is list):
 			#
 				file_absolute_path_name = path.abspath(file_path_name)
 

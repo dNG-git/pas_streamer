@@ -18,11 +18,10 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-from dNG.pas.runtime.iterator import Iterator
 from dNG.pas.runtime.value_exception import ValueException
 from .abstract import Abstract
 
-class AbstractEncapsulated(Abstract, Iterator):
+class AbstractEncapsulated(Abstract):
 #
 	"""
 The abstract streamer encapsulates another streamer for transforming it.
