@@ -79,10 +79,10 @@ Active file resource
 	def close(self):
 	#
 		"""
-Closes all related resource pointers for the active streamer session.
+python.org: Flush and close this stream.
 
 :return: (bool) True on success
-:since: v0.1.00
+:since:  v0.1.00
 		"""
 
 		with self._lock:
@@ -251,13 +251,13 @@ Opens a streamer session for the given URL.
 		else: return False
 	#
 
-	def read(self, _bytes = None):
+	def read(self, n = None):
 	#
 		"""
-Reads from the current streamer session.
+python.org: Read up to n bytes from the object and return them.
 
-:param bytes: How many bytes to read from the current position (0 means
-              until EOF)
+:param n: How many bytes to read from the current position (0 means until
+          EOF)
 
 :return: (bytes) Data; None if EOF
 :since:  v0.1.00
@@ -265,7 +265,7 @@ Reads from the current streamer session.
 
 		_return = None
 
-		if (_bytes is None): _bytes = self.io_chunk_size
+		if (n is None): n = self.io_chunk_size
 
 		if (self.resource is None): raise IOException("Streamer resource is invalid")
 		elif (self.stream_size != 0 and (not self.resource.is_eof())):
@@ -279,11 +279,12 @@ Reads from the current streamer session.
 				#
 					if (is_size_limited):
 					#
-						if (_bytes > self.stream_size): _bytes = self.stream_size
-						self.stream_size -= _bytes
+						if (n < 1): self.stream_size = 0
+						elif (n > self.stream_size): n = self.stream_size
+						else: self.stream_size -= n
 					#
 
-					_return = (self.resource.read(_bytes) if (_bytes > 0) else None)
+					_return = (self.resource.read(n) if (n > 0) else self.resource.read())
 				#
 			#
 		#
@@ -294,11 +295,11 @@ Reads from the current streamer session.
 	def seek(self, offset):
 	#
 		"""
-Seek to a given offset.
+python.org: Change the stream position to the given byte offset.
 
 :param offset: Seek to the given offset
 
-:return: (bool) True on success
+:return: (int) Return the new absolute position.
 :since:  v0.1.00
 		"""
 
@@ -306,16 +307,16 @@ Seek to a given offset.
 
 		with self._lock:
 		#
-			return (False if (self.resource is None) else self.resource.seek(offset))
+			return (-1 if (self.resource is None) else self.resource.seek(offset))
 		#
 	#
 
 	def tell(self):
 	#
 		"""
-Returns the current offset.
+python.org: Return the current stream position as an opaque number.
 
-:return: (int) Offset
+:return: (int) Stream position
 :since:  v0.1.02
 		"""
 

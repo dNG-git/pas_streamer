@@ -72,10 +72,10 @@ File-like resource size
 	def close(self):
 	#
 		"""
-Closes all related resource pointers for the active streamer session.
+python.org: Flush and close this stream.
 
 :return: (bool) True on success
-:since: v0.1.00
+:since:  v0.1.02
 		"""
 
 		with self._lock:
@@ -84,7 +84,12 @@ Closes all related resource pointers for the active streamer session.
 			else:
 			#
 				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
-				_return = self.resource.close()
+
+				_return = (self.resource.close()
+				           if (hasattr(self.resource, "close")) else
+				           True
+				          )
+
 				self.resource = None
 			#
 		#
@@ -98,7 +103,7 @@ Closes all related resource pointers for the active streamer session.
 Returns the size in bytes.
 
 :return: (int) Size in bytes
-:since:  v0.1.00
+:since:  v0.1.02
 		"""
 
 		with self._lock:
@@ -114,13 +119,17 @@ Returns the size in bytes.
 Checks if the resource has reached EOF.
 
 :return: (bool) True if EOF
-:since:  v0.1.00
+:since:  v0.1.02
 		"""
 
 		with self._lock:
 		#
-			return (True if (self.resource is None) else self.resource.is_eof())
+			if (self.resource is None): _return = True
+			elif (hasattr(self.resource, "is_eof")): _return = self.resource.is_eof()
+			else: _return = (self.tell() == self.get_size())
 		#
+
+		return _return
 	#
 
 	def is_resource_valid(self):
@@ -129,7 +138,7 @@ Checks if the resource has reached EOF.
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.1.02
 		"""
 
 		return (self.resource is not None)
@@ -143,50 +152,50 @@ Returns true if the streamer is able to return data for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True if supported
-:since:  v0.1.00
+:since:  v0.1.02
 		"""
 
 		url_elements = urlsplit(url)
 		return (url_elements.scheme == "file-like")
 	#
 
-	def read(self, _bytes = None):
+	def read(self, n = None):
 	#
 		"""
-Reads from the current streamer session.
+python.org: Read up to n bytes from the object and return them.
 
-:param bytes: How many bytes to read from the current position (0 means
-              until EOF)
+:param n: How many bytes to read from the current position (0 means until
+          EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.00
+:since:  v0.1.02
 		"""
 
-		if (_bytes is None): _bytes = self.io_chunk_size
+		if (n is None): n = self.io_chunk_size
 
 		with self._lock:
 		#
 			if (self.resource is None): raise IOException("Streamer resource is invalid")
-			return (self.resource.read() if (_bytes < 1) else self.resource.read(_bytes))
+			return (self.resource.read() if (n < 1) else self.resource.read(n))
 		#
 	#
 
 	def seek(self, offset):
 	#
 		"""
-Seek to a given offset.
+python.org: Change the stream position to the given byte offset.
 
 :param offset: Seek to the given offset
 
-:return: (bool) True on success
-:since:  v0.1.00
+:return: (int) Return the new absolute position.
+:since:  v0.1.02
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
 
 		with self._lock:
 		#
-			return (False if (self.resource is None) else self.resource.seek(offset))
+			return (-1 if (self.resource is None) else self.resource.seek(offset))
 		#
 	#
 
@@ -197,7 +206,7 @@ Sets the file-like resource to be used.
 
 :param resource: Seek to the given offset
 
-:since: v0.1.00
+:since: v0.1.02
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
@@ -212,7 +221,7 @@ Seek to a given offset.
 
 :param offset: Seek to the given offset
 
-:since: v0.1.00
+:since: v0.1.02
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
@@ -226,7 +235,7 @@ Seek to a given offset.
 Returns false if the resource has no defined size or does not support
 seeking.
 
-:since: v0.1.00
+:since: v0.1.02
 		"""
 
 		return (self.size is not None)
@@ -235,9 +244,9 @@ seeking.
 	def tell(self):
 	#
 		"""
-Returns the current offset.
+python.org: Return the current stream position as an opaque number.
 
-:return: (int) Offset
+:return: (int) Stream position
 :since:  v0.1.02
 		"""
 

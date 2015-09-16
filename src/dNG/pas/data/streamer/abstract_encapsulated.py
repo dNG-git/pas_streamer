@@ -78,10 +78,10 @@ python.org: Return the next item from the container.
 	def close(self):
 	#
 		"""
-Closes all related resource pointers for the active streamer session.
+python.org: Flush and close this stream.
 
 :return: (bool) True on success
-:since: v0.1.00
+:since:  v0.1.00
 		"""
 
 		self.streamer.close()
@@ -178,29 +178,29 @@ Opens a streamer session for the given URL.
 		return self.streamer.open_url(url, exclusive_id)
 	#
 
-	def read(self, _bytes = None):
+	def read(self, n = None):
 	#
 		"""
-Reads from the current streamer session.
+python.org: Read up to n bytes from the object and return them.
 
-:param _bytes: How many bytes to read from the current position (0 means
-               until EOF)
+:param n: How many bytes to read from the current position (0 means until
+          EOF)
 
 :return: (bytes) Data; None if EOF
 :since:  v0.1.00
 		"""
 
-		return self.streamer.read(_bytes)
+		return self.streamer.read(n)
 	#
 
 	def seek(self, offset):
 	#
 		"""
-Seek to a given offset.
+python.org: Change the stream position to the given byte offset.
 
 :param offset: Seek to the given offset
 
-:return: (bool) True on success
+:return: (int) Return the new absolute position.
 :since:  v0.1.00
 		"""
 
@@ -238,9 +238,9 @@ Define a range to be streamed.
 	def tell(self):
 	#
 		"""
-Returns the current offset.
+python.org: Return the current stream position as an opaque number.
 
-:return: (int) Offset
+:return: (int) Stream position
 :since:  v0.1.02
 		"""
 
