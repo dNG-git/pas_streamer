@@ -112,8 +112,7 @@ python.org: Return the next item from the container.
 		"""
 python.org: Flush and close this stream.
 
-:return: (bool) True on success
-:since:  v0.1.00
+:since: v0.1.00
 		"""
 
 		raise NotImplementedException()

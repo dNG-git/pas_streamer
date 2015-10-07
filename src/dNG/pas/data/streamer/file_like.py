@@ -74,27 +74,22 @@ File-like resource size
 		"""
 python.org: Flush and close this stream.
 
-:return: (bool) True on success
-:since:  v0.1.02
+:since: v0.1.02
 		"""
 
 		with self._lock:
 		#
-			if (self.resource is None): _return = False
-			else:
+			if (self.resource is not None):
 			#
 				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 
-				_return = (self.resource.close()
-				           if (hasattr(self.resource, "close")) else
-				           True
-				          )
-
-				self.resource = None
+				if (hasattr(self.resource, "close")):
+				#
+					try: self.resource.close()
+					finally: self.resource = None
+				#
 			#
 		#
-
-		return _return
 	#
 
 	def get_size(self):
@@ -204,22 +199,26 @@ python.org: Change the stream position to the given byte offset.
 		"""
 Sets the file-like resource to be used.
 
-:param resource: Seek to the given offset
+:param resource: File-like resource
 
 :since: v0.1.02
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 
-		with self._lock: self.resource = resource
+		with self._lock:
+		#
+			self.resource = resource
+			if (hasattr(resource, "get_size")): self.set_size(resource.get_size())
+		#
 	#
 
 	def set_size(self, size):
 	#
 		"""
-Seek to a given offset.
+Sets the size of the resource if calculated externally.
 
-:param offset: Seek to the given offset
+:param size: Resource size
 
 :since: v0.1.02
 		"""

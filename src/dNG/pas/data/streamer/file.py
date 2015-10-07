@@ -81,22 +81,19 @@ Active file resource
 		"""
 python.org: Flush and close this stream.
 
-:return: (bool) True on success
-:since:  v0.1.00
+:since: v0.1.00
 		"""
 
 		with self._lock:
 		#
-			if (self.resource is None): _return = False
-			else:
+			if (self.resource is not None):
 			#
 				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
-				_return = self.resource.close()
-				self.resource = None
+
+				try: self.resource.close()
+				finally: self.resource = None
 			#
 		#
-
-		return _return
 	#
 
 	def get_size(self):
