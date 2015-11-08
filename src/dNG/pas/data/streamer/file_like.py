@@ -25,9 +25,10 @@ except ImportError: from urlparse import urlsplit
 
 from dNG.pas.data.settings import Settings
 from dNG.pas.runtime.io_exception import IOException
+from dNG.pas.vfs.file_like_wrapper_mixin import FileLikeWrapperMixin
 from .abstract import Abstract
 
-class FileLike(Abstract):
+class FileLike(FileLikeWrapperMixin, Abstract):
 #
 	"""
 "FileLike" takes an existing file-like instance to provide the streaming
@@ -42,6 +43,10 @@ interface.
              Mozilla Public License, v. 2.0
 	"""
 
+	_FILE_WRAPPED_METHODS = ( "seek",
+	                          "tell"
+	                        )
+
 	def __init__(self, timeout_retries = 5):
 	#
 		"""
@@ -53,11 +58,8 @@ Constructor __init__(FileLike)
 		"""
 
 		Abstract.__init__(self, timeout_retries)
+		FileLikeWrapperMixin.__init__(self)
 
-		self.resource = None
-		"""
-Active file-like resource
-		"""
 		self.size = None
 		"""
 File-like resource size
@@ -79,15 +81,11 @@ python.org: Flush and close this stream.
 
 		with self._lock:
 		#
-			if (self.resource is not None):
+			if (self._wrapped_resource is not None):
 			#
 				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 
-				if (hasattr(self.resource, "close")):
-				#
-					try: self.resource.close()
-					finally: self.resource = None
-				#
+				FileLikeWrapperMixin.close(self)
 			#
 		#
 	#
@@ -119,8 +117,8 @@ Checks if the resource has reached EOF.
 
 		with self._lock:
 		#
-			if (self.resource is None): _return = True
-			elif (hasattr(self.resource, "is_eof")): _return = self.resource.is_eof()
+			if (self._wrapped_resource is None): _return = True
+			elif (hasattr(self._wrapped_resource, "is_eof")): _return = self._wrapped_resource.is_eof()
 			else: _return = (self.tell() == self.get_size())
 		#
 
@@ -136,7 +134,7 @@ Returns true if the streamer resource is available.
 :since:  v0.1.02
 		"""
 
-		return (self.resource is not None)
+		return (self._wrapped_resource is not None)
 	#
 
 	def is_url_supported(self, url):
@@ -168,30 +166,8 @@ python.org: Read up to n bytes from the object and return them.
 
 		if (n is None): n = self.io_chunk_size
 
-		with self._lock:
-		#
-			if (self.resource is None): raise IOException("Streamer resource is invalid")
-			return (self.resource.read() if (n < 1) else self.resource.read(n))
-		#
-	#
-
-	def seek(self, offset):
-	#
-		"""
-python.org: Change the stream position to the given byte offset.
-
-:param offset: Seek to the given offset
-
-:return: (int) Return the new absolute position.
-:since:  v0.1.02
-		"""
-
-		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
-
-		with self._lock:
-		#
-			return (-1 if (self.resource is None) else self.resource.seek(offset))
-		#
+		if (self._wrapped_resource is None): raise IOException("Streamer resource is invalid")
+		return (self._wrapped_resource.read() if (n < 1) else self._wrapped_resource.read(n))
 	#
 
 	def set_file(self, resource):
@@ -208,7 +184,7 @@ Sets the file-like resource to be used.
 
 		with self._lock:
 		#
-			self.resource = resource
+			self._set_wrapped_resource(resource)
 			if (hasattr(resource, "get_size")): self.set_size(resource.get_size())
 		#
 	#
@@ -238,22 +214,6 @@ seeking.
 		"""
 
 		return (self.size is not None)
-	#
-
-	def tell(self):
-	#
-		"""
-python.org: Return the current stream position as an opaque number.
-
-:return: (int) Stream position
-:since:  v0.1.02
-		"""
-
-		with self._lock:
-		#
-			if (self.resource is None): raise IOException("Streamer resource is invalid")
-			return self.resource.tell()
-		#
 	#
 #
 
