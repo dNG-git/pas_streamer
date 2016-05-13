@@ -55,22 +55,6 @@ Encapsulated streamer instance
 		"""
 	#
 
-	def __getattr__(self, name):
-	#
-		"""
-python.org: Called when an attribute lookup has not found the attribute in
-the usual places (i.e. it is not an instance attribute nor is it found in the
-class tree for self).
-
-:param name: Attribute name
-
-:return: (mixed) Session attribute
-:since:  v0.1.00
-		"""
-
-		return getattr(self.streamer, name)
-	#
-
 	def __next__(self):
 	#
 		"""
@@ -89,6 +73,177 @@ python.org: Return the next item from the container.
 		#
 
 		return data
+	#
+
+	def close(self):
+	#
+		"""
+python.org: Flush and close this stream.
+
+:since: v0.1.00
+		"""
+
+		self.streamer.close()
+	#
+
+	def get_io_chunk_size(self):
+	#
+		"""
+Returns the IO chunk size to be used for reading.
+
+:return: (int) IO chunk size
+:since:  v0.1.00
+		"""
+
+		return self.streamer.get_io_chunk_size()
+	#
+
+	def get_size(self):
+	#
+		"""
+Returns the size in bytes.
+
+:return: (int) Size in bytes
+:since:  v0.1.00
+		"""
+
+		return self.streamer.get_size()
+	#
+
+	def is_eof(self):
+	#
+		"""
+Checks if the resource has reached EOF.
+
+:return: (bool) True if EOF
+:since:  v0.1.00
+		"""
+
+		return self.streamer.is_eof()
+	#
+
+	def is_resource_valid(self):
+	#
+		"""
+Returns true if the streamer resource is available.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		return self.streamer.is_resource_valid()
+	#
+
+	def is_supported(self, feature):
+	#
+		"""
+Returns true if the feature requested is supported by this instance.
+
+:param feature: Feature name string
+
+:return: (bool) True if supported
+:since:  v0.1.01
+		"""
+
+		return self.streamer.is_supported(feature)
+	#
+
+	def is_url_supported(self, url):
+	#
+		"""
+Returns true if the streamer is able to return data for the given URL.
+
+:param url: URL to be streamed
+
+:return: (bool) True if supported
+:since:  v0.1.00
+		"""
+
+		return self.streamer.is_url_supported(url)
+	#
+
+	def open_url(self, url, exclusive_id = None):
+	#
+		"""
+Opens a streamer session for the given URL.
+
+:param url: URL to be streamed
+:param exclusive_id: Closes all other streamers with them same exclusive ID.
+
+:return: (bool) True on success
+:since:  v0.1.00
+		"""
+
+		return self.streamer.open_url(url, exclusive_id)
+	#
+
+	def read(self, n = None):
+	#
+		"""
+python.org: Read up to n bytes from the object and return them.
+
+:param n: How many bytes to read from the current position (0 means until
+          EOF)
+
+:return: (bytes) Data; None if EOF
+:since:  v0.1.00
+		"""
+
+		return self.streamer.read(n)
+	#
+
+	def seek(self, offset):
+	#
+		"""
+python.org: Change the stream position to the given byte offset.
+
+:param offset: Seek to the given offset
+
+:return: (int) Return the new absolute position.
+:since:  v0.1.00
+		"""
+
+		return self.streamer.seek(offset)
+	#
+
+	def set_io_chunk_size(self, chunk_size):
+	#
+		"""
+Sets the IO chunk size to be used for reading.
+
+:param chunk_size: IO chunk size
+
+:since: v0.1.00
+		"""
+
+		return self.streamer.set_io_chunk_size(chunk_size)
+	#
+
+	def set_range(self, range_start, range_end):
+	#
+		"""
+Define a range to be streamed.
+
+:param range_start: First byte of range
+:param range_end: Last byte of range
+
+:return: (bool) True if valid
+:since:  v0.1.00
+		"""
+
+		return self.streamer.set_range(range_start, range_end)
+	#
+
+	def tell(self):
+	#
+		"""
+python.org: Return the current stream position as an opaque number.
+
+:return: (int) Stream position
+:since:  v0.1.02
+		"""
+
+		return self.streamer.tell()
 	#
 #
 
