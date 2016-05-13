@@ -145,7 +145,10 @@ Returns true if the feature requested is supported by this instance.
 :since:  v0.1.01
 		"""
 
-		return self.streamer.is_supported(feature)
+		_return = self.streamer.is_supported(feature)
+		if (not _return): _return = self.is_supported(feature)
+
+		return _return
 	#
 
 	def is_url_supported(self, url):
