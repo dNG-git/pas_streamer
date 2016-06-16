@@ -148,8 +148,7 @@ Returns true if the streamer is able to return data for the given URL.
 :since:  v0.1.02
 		"""
 
-		url_elements = urlsplit(url)
-		return (url_elements.scheme == "file-like")
+		return False
 	#
 
 	def read(self, n = None):
