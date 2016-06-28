@@ -20,9 +20,6 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 # pylint: disable=import-error,no-name-in-module
 
-try: from urllib.parse import urlsplit
-except ImportError: from urlparse import urlsplit
-
 from dNG.pas.data.settings import Settings
 from dNG.pas.runtime.io_exception import IOException
 from dNG.pas.vfs.file_like_wrapper_mixin import FileLikeWrapperMixin
@@ -200,7 +197,7 @@ Sets the size of the resource if calculated externally.
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
 
-		self.size = size
+		if (size is None or size > -1): self.size = size
 	#
 
 	def _supports_seeking(self):
