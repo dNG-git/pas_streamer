@@ -18,7 +18,8 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-from dNG.pas.runtime.value_exception import ValueException
+from dNG.runtime.value_exception import ValueException
+
 from .abstract import Abstract
 
 class AbstractEncapsulated(Abstract):
@@ -26,11 +27,11 @@ class AbstractEncapsulated(Abstract):
 	"""
 The abstract streamer encapsulates another streamer for transforming it.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  (C) direct Netware Group - All rights reserved
 :package:    pas
 :subpackage: streamer
-:since:      v0.1.00
+:since:      v0.2.00
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
 	"""
@@ -42,7 +43,7 @@ Constructor __init__(AbstractEncapsulated)
 
 :param streamer: Encapsulated streamer instance
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		if (not isinstance(streamer, Abstract)): raise ValueException("Given streamer is not supported")
@@ -61,7 +62,7 @@ Encapsulated streamer instance
 python.org: Return the next item from the container.
 
 :return: (bytes) Response data
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		data = self.read()
@@ -80,7 +81,7 @@ python.org: Return the next item from the container.
 		"""
 python.org: Flush and close this stream.
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		self.streamer.close()
@@ -92,7 +93,7 @@ python.org: Flush and close this stream.
 Returns the IO chunk size to be used for reading.
 
 :return: (int) IO chunk size
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.get_io_chunk_size()
@@ -104,7 +105,7 @@ Returns the IO chunk size to be used for reading.
 Returns the size in bytes.
 
 :return: (int) Size in bytes
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.get_size()
@@ -116,7 +117,7 @@ Returns the size in bytes.
 Checks if the resource has reached EOF.
 
 :return: (bool) True if EOF
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.is_eof()
@@ -128,7 +129,7 @@ Checks if the resource has reached EOF.
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.is_resource_valid()
@@ -142,7 +143,7 @@ Returns true if the feature requested is supported by this instance.
 :param feature: Feature name string
 
 :return: (bool) True if supported
-:since:  v0.1.01
+:since:  v0.2.01
 		"""
 
 		_return = self.streamer.is_supported(feature)
@@ -159,7 +160,7 @@ Returns true if the streamer is able to return data for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True if supported
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.is_url_supported(url)
@@ -174,7 +175,7 @@ Opens a streamer session for the given URL.
 :param exclusive_id: Closes all other streamers with them same exclusive ID.
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.open_url(url, exclusive_id)
@@ -189,7 +190,7 @@ python.org: Read up to n bytes from the object and return them.
           EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.read(n)
@@ -203,7 +204,7 @@ python.org: Change the stream position to the given byte offset.
 :param offset: Seek to the given offset
 
 :return: (int) Return the new absolute position.
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.seek(offset)
@@ -216,7 +217,7 @@ Sets the IO chunk size to be used for reading.
 
 :param chunk_size: IO chunk size
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		return self.streamer.set_io_chunk_size(chunk_size)
@@ -231,7 +232,7 @@ Define a range to be streamed.
 :param range_end: Last byte of range
 
 :return: (bool) True if valid
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.streamer.set_range(range_start, range_end)
@@ -243,7 +244,7 @@ Define a range to be streamed.
 python.org: Return the current stream position as an opaque number.
 
 :return: (int) Stream position
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		return self.streamer.tell()

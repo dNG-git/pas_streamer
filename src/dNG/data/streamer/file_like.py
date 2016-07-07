@@ -20,9 +20,10 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 # pylint: disable=import-error,no-name-in-module
 
-from dNG.pas.data.settings import Settings
-from dNG.pas.runtime.io_exception import IOException
-from dNG.pas.vfs.file_like_wrapper_mixin import FileLikeWrapperMixin
+from dNG.data.settings import Settings
+from dNG.runtime.io_exception import IOException
+from dNG.vfs.file_like_wrapper_mixin import FileLikeWrapperMixin
+
 from .abstract import Abstract
 
 class FileLike(FileLikeWrapperMixin, Abstract):
@@ -31,11 +32,11 @@ class FileLike(FileLikeWrapperMixin, Abstract):
 "FileLike" takes an existing file-like instance to provide the streaming
 interface.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  (C) direct Netware Group - All rights reserved
 :package:    pas
 :subpackage: streamer
-:since:      v0.1.02
+:since:      v0.2.00
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
 	"""
@@ -51,7 +52,7 @@ Constructor __init__(FileLike)
 
 :param timeout_retries: Retries before timing out
 
-:since: v0.1.02
+:since: v0.2.00
 		"""
 
 		Abstract.__init__(self, timeout_retries)
@@ -73,7 +74,7 @@ File-like resource size
 		"""
 python.org: Flush and close this stream.
 
-:since: v0.1.02
+:since: v0.2.00
 		"""
 
 		with self._lock:
@@ -93,7 +94,7 @@ python.org: Flush and close this stream.
 Returns the size in bytes.
 
 :return: (int) Size in bytes
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		with self._lock:
@@ -109,7 +110,7 @@ Returns the size in bytes.
 Checks if the resource has reached EOF.
 
 :return: (bool) True if EOF
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		with self._lock:
@@ -128,7 +129,7 @@ Checks if the resource has reached EOF.
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		return (self._wrapped_resource is not None)
@@ -142,7 +143,7 @@ Returns true if the streamer is able to return data for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True if supported
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		return False
@@ -157,7 +158,7 @@ python.org: Read up to n bytes from the object and return them.
           EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		if (n is None): n = self.io_chunk_size
@@ -173,7 +174,7 @@ Sets the file-like resource to be used.
 
 :param resource: File-like resource
 
-:since: v0.1.02
+:since: v0.2.00
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
@@ -192,7 +193,7 @@ Sets the size of the resource if calculated externally.
 
 :param size: Resource size
 
-:since: v0.1.02
+:since: v0.2.00
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
@@ -206,7 +207,7 @@ Sets the size of the resource if calculated externally.
 Returns false if the resource has no defined size or does not support
 seeking.
 
-:since: v0.1.02
+:since: v0.2.00
 		"""
 
 		return (self.size is not None)

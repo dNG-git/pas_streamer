@@ -21,8 +21,9 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 from base64 import b64decode
 from math import ceil
 
-from dNG.pas.data.binary import Binary
-from dNG.pas.runtime.io_exception import IOException
+from dNG.data.binary import Binary
+from dNG.runtime.io_exception import IOException
+
 from .abstract_encapsulated import AbstractEncapsulated
 
 class Base64Decoder(AbstractEncapsulated):
@@ -30,11 +31,11 @@ class Base64Decoder(AbstractEncapsulated):
 	"""
 Decodes a base64 encoded, encapsulated streamer while being read.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  (C) direct Netware Group - All rights reserved
 :package:    pas
 :subpackage: streamer
-:since:      v0.1.02
+:since:      v0.2.00
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
 	"""
@@ -46,7 +47,7 @@ Constructor __init__(Base64Decoder)
 
 :param streamer: Encapsulated streamer instance
 
-:since: v0.1.02
+:since: v0.2.00
 		"""
 
 		AbstractEncapsulated.__init__(self, streamer)
@@ -68,7 +69,7 @@ Reads from the current streamer session without decoding it transparently.
                until EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		return AbstractEncapsulated.read(self, _bytes)
@@ -83,7 +84,7 @@ python.org: Read up to n bytes from the object and return them.
           EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		raw_data_size = ((ceil(4 * (n / 3))) if (n > 0) else self.get_size())
@@ -104,7 +105,7 @@ python.org: Change the stream position to the given byte offset.
 :param offset: Seek to the given offset
 
 :return: (int) Return the new absolute position.
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		if (offset % 3 != 0): raise IOException("Resource can not be seeked to a non-boundary offset")
@@ -120,7 +121,7 @@ Define a range to be streamed.
 :param range_end: Last byte of range
 
 :return: (bool) True if valid
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		if (range_start % 3 != 0): raise IOException("Resource range start at a non-boundary offset is not supported")

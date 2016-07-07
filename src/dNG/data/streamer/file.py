@@ -30,22 +30,23 @@ except ImportError:
 	from urlparse import urlsplit
 #
 
-from dNG.pas.data.binary import Binary
-from dNG.pas.data.settings import Settings
-from dNG.pas.runtime.io_exception import IOException
-from .abstract import Abstract
+from dNG.data.binary import Binary
+from dNG.data.settings import Settings
+from dNG.runtime.io_exception import IOException
 import dNG.data.file
+
+from .abstract import Abstract
 
 class File(Abstract):
 #
 	"""
 "File" provides a streamer for local files.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  (C) direct Netware Group - All rights reserved
 :package:    pas
 :subpackage: streamer
-:since:      v0.1.00
+:since:      v0.2.00
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
 	"""
@@ -57,7 +58,7 @@ Constructor __init__(File)
 
 :param timeout_retries: Retries before timing out
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		Abstract.__init__(self, timeout_retries)
@@ -81,7 +82,7 @@ Active file resource
 		"""
 python.org: Flush and close this stream.
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		with self._lock:
@@ -102,7 +103,7 @@ python.org: Flush and close this stream.
 Returns the size in bytes.
 
 :return: (int) Size in bytes
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		with self._lock:
@@ -118,7 +119,7 @@ Returns the size in bytes.
 Checks if the resource has reached EOF.
 
 :return: (bool) True if EOF
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		with self._lock:
@@ -135,7 +136,7 @@ Checks if the file access is allowed for streaming.
 :param file_path_name: Path to the requested file
 
 :return: (bool) True if allowed
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		_return = False
@@ -171,7 +172,7 @@ Checks if the file access is allowed for streaming.
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		with self._lock: return (self.resource is not None)
@@ -185,7 +186,7 @@ Returns true if the streamer is able to return data for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True if supported
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		url_elements = urlsplit(url)
@@ -200,7 +201,7 @@ Opens a file session.
 :param file_path_name: Path to the requested file
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		_return = False
@@ -239,7 +240,7 @@ Opens a streamer session for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		url_elements = urlsplit(url)
@@ -257,7 +258,7 @@ python.org: Read up to n bytes from the object and return them.
           EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		_return = None
@@ -297,7 +298,7 @@ python.org: Change the stream position to the given byte offset.
 :param offset: Seek to the given offset
 
 :return: (int) Return the new absolute position.
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.seek({1:d})- (#echo(__LINE__)#)", self, offset, context = "pas_streamer")
@@ -314,7 +315,7 @@ python.org: Change the stream position to the given byte offset.
 python.org: Return the current stream position as an opaque number.
 
 :return: (int) Stream position
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		with self._lock:
@@ -333,7 +334,7 @@ Unescapes the path.
 :param url_elements_path: Escaped path from an URL
 
 :return: (str) Unescaped path
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return path.normpath(unquote(Binary.str(url_elements_path)))

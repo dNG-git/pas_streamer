@@ -18,11 +18,11 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-from dNG.pas.data.supports_mixin import SupportsMixin
-from dNG.pas.module.named_loader import NamedLoader
-from dNG.pas.runtime.iterator import Iterator
-from dNG.pas.runtime.not_implemented_exception import NotImplementedException
-from dNG.pas.runtime.thread_lock import ThreadLock
+from dNG.data.supports_mixin import SupportsMixin
+from dNG.module.named_loader import NamedLoader
+from dNG.runtime.iterator import Iterator
+from dNG.runtime.not_implemented_exception import NotImplementedException
+from dNG.runtime.thread_lock import ThreadLock
 
 class Abstract(Iterator, SupportsMixin):
 #
@@ -30,11 +30,11 @@ class Abstract(Iterator, SupportsMixin):
 The abstract streamer defines the to be implemented interface. A streamer
 interface is similar to a file one.
 
-:author:     direct Netware Group
+:author:     direct Netware Group et al.
 :copyright:  (C) direct Netware Group - All rights reserved
 :package:    pas
 :subpackage: streamer
-:since:      v0.1.00
+:since:      v0.2.00
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
 	"""
@@ -48,7 +48,7 @@ Constructor __init__(Abstract)
 
 :param timeout_retries: Retries before timing out
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		SupportsMixin.__init__(self)
@@ -61,7 +61,7 @@ IO chunk size
 		"""
 Thread safety lock
 		"""
-		self.log_handler = NamedLoader.get_singleton("dNG.pas.data.logging.LogHandler", False)
+		self.log_handler = NamedLoader.get_singleton("dNG.data.logging.LogHandler", False)
 		"""
 Retries before timing out
 		"""
@@ -80,7 +80,7 @@ Retries before timing out
 		"""
 Destructor __del__(Abstract)
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		self.close()
@@ -92,7 +92,7 @@ Destructor __del__(Abstract)
 python.org: Return the next item from the container.
 
 :return: (bytes) Response data
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		with self._lock:
@@ -112,7 +112,7 @@ python.org: Return the next item from the container.
 		"""
 python.org: Flush and close this stream.
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		raise NotImplementedException()
@@ -124,7 +124,7 @@ python.org: Flush and close this stream.
 Returns the IO chunk size to be used for reading.
 
 :return: (int) IO chunk size
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return self.io_chunk_size
@@ -136,7 +136,7 @@ Returns the IO chunk size to be used for reading.
 Returns the size in bytes.
 
 :return: (int) Size in bytes
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		raise NotImplementedException()
@@ -148,7 +148,7 @@ Returns the size in bytes.
 Checks if the resource has reached EOF.
 
 :return: (bool) True if EOF
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		raise NotImplementedException()
@@ -160,7 +160,7 @@ Checks if the resource has reached EOF.
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return False
@@ -174,7 +174,7 @@ Returns true if the streamer is able to return data for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True if supported
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return False
@@ -188,7 +188,7 @@ Opens a streamer session for the given URL.
 :param url: URL to be streamed
 
 :return: (bool) True on success
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return False
@@ -203,7 +203,7 @@ python.org: Read up to n bytes from the object and return them.
           EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		raise NotImplementedException()
@@ -217,7 +217,7 @@ python.org: Change the stream position to the given byte offset.
 :param offset: Seek to the given offset
 
 :return: (int) Return the new absolute position.
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		return -1
@@ -230,7 +230,7 @@ Sets the IO chunk size to be used for reading.
 
 :param chunk_size: IO chunk size
 
-:since: v0.1.00
+:since: v0.2.00
 		"""
 
 		self.io_chunk_size = chunk_size
@@ -245,7 +245,7 @@ Define a range to be streamed.
 :param range_end: Last byte of range
 
 :return: (bool) True if valid
-:since:  v0.1.00
+:since:  v0.2.00
 		"""
 
 		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_range({1:d}, {2:d})- (#echo(__LINE__)#)", self, range_start, range_end, context = "pas_streamer")
@@ -273,7 +273,7 @@ Define a range to be streamed.
 python.org: Return the current stream position as an opaque number.
 
 :return: (int) Stream position
-:since:  v0.1.02
+:since:  v0.2.00
 		"""
 
 		raise NotImplementedException()
