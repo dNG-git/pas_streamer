@@ -65,6 +65,7 @@ File-like resource size
 
 		self.io_chunk_size = int(Settings.get("pas_global_io_chunk_size_local", 524288))
 
+		self.supported_features['external_io_chunk_size'] = True
 		self.supported_features['external_size'] = True
 		self.supported_features['seeking'] = self._supports_seeking
 	#
@@ -184,6 +185,21 @@ Sets the file-like resource to be used.
 			self._set_wrapped_resource(resource)
 			if (hasattr(resource, "get_size")): self.set_size(resource.get_size())
 		#
+	#
+
+	def set_io_chunk_size(self, chunk_size):
+	#
+		"""
+Sets the IO chunk size to be used for reading.
+
+:param chunk_size: IO chunk size
+
+:since: v0.2.00
+		"""
+
+		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_io_chunk_size({1:d})- (#echo(__LINE__)#)", self, chunk_size, context = "pas_streamer")
+
+		if (chunk_size is None or chunk_size > 0): self.io_chunk_size = chunk_size
 	#
 
 	def set_size(self, size):
