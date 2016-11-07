@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-##j## BOF
 
 """
 direct PAS
@@ -27,8 +26,7 @@ from dNG.vfs.file_like_wrapper_mixin import FileLikeWrapperMixin
 from .abstract import Abstract
 
 class FileLike(FileLikeWrapperMixin, Abstract):
-#
-	"""
+    """
 "FileLike" takes an existing file-like instance to provide the streaming
 interface.
 
@@ -39,120 +37,109 @@ interface.
 :since:      v0.2.00
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
-	"""
+    """
 
-	_FILE_WRAPPED_METHODS = ( "seek",
-	                          "tell"
-	                        )
+    _FILE_WRAPPED_METHODS = ( "seek",
+                              "tell"
+                            )
 
-	def __init__(self, timeout_retries = 5):
-	#
-		"""
+    def __init__(self, timeout_retries = 5):
+        """
 Constructor __init__(FileLike)
 
 :param timeout_retries: Retries before timing out
 
 :since: v0.2.00
-		"""
+        """
 
-		Abstract.__init__(self, timeout_retries)
-		FileLikeWrapperMixin.__init__(self)
+        Abstract.__init__(self, timeout_retries)
+        FileLikeWrapperMixin.__init__(self)
 
-		self.size = None
-		"""
+        self.size = None
+        """
 File-like resource size
-		"""
+        """
 
-		self.io_chunk_size = int(Settings.get("pas_global_io_chunk_size_local", 524288))
+        self.io_chunk_size = int(Settings.get("pas_global_io_chunk_size_local", 524288))
 
-		self.supported_features['external_io_chunk_size'] = True
-		self.supported_features['external_size'] = True
-		self.supported_features['seeking'] = self._supports_seeking
-	#
+        self.supported_features['external_io_chunk_size'] = True
+        self.supported_features['external_size'] = True
+        self.supported_features['seeking'] = self._supports_seeking
+    #
 
-	def close(self):
-	#
-		"""
+    def close(self):
+        """
 python.org: Flush and close this stream.
 
 :since: v0.2.00
-		"""
+        """
 
-		with self._lock:
-		#
-			if (self._wrapped_resource is not None):
-			#
-				if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
+        with self._lock:
+            if (self._wrapped_resource is not None):
+                if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.close()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 
-				FileLikeWrapperMixin.close(self)
-			#
-		#
-	#
+                FileLikeWrapperMixin.close(self)
+            #
+        #
+    #
 
-	def get_size(self):
-	#
-		"""
+    def get_size(self):
+        """
 Returns the size in bytes.
 
 :return: (int) Size in bytes
 :since:  v0.2.00
-		"""
+        """
 
-		with self._lock:
-		#
-			if (self.size is None): raise IOException("Streamer resource size is not defined")
-			return self.size
-		#
-	#
+        with self._lock:
+            if (self.size is None): raise IOException("Streamer resource size is not defined")
+            return self.size
+        #
+    #
 
-	def is_eof(self):
-	#
-		"""
+    def is_eof(self):
+        """
 Checks if the resource has reached EOF.
 
 :return: (bool) True if EOF
 :since:  v0.2.00
-		"""
+        """
 
-		with self._lock:
-		#
-			if (self._wrapped_resource is None): _return = True
-			elif (hasattr(self._wrapped_resource, "is_eof")): _return = self._wrapped_resource.is_eof()
-			else: _return = (self.tell() == self.get_size())
-		#
+        with self._lock:
+            if (self._wrapped_resource is None): _return = True
+            elif (hasattr(self._wrapped_resource, "is_eof")): _return = self._wrapped_resource.is_eof()
+            else: _return = (self.tell() == self.get_size())
+        #
 
-		return _return
-	#
+        return _return
+    #
 
-	def is_resource_valid(self):
-	#
-		"""
+    def is_resource_valid(self):
+        """
 Returns true if the streamer resource is available.
 
 :return: (bool) True on success
 :since:  v0.2.00
-		"""
+        """
 
-		return (self._wrapped_resource is not None)
-	#
+        return (self._wrapped_resource is not None)
+    #
 
-	def is_url_supported(self, url):
-	#
-		"""
+    def is_url_supported(self, url):
+        """
 Returns true if the streamer is able to return data for the given URL.
 
 :param url: URL to be streamed
 
 :return: (bool) True if supported
 :since:  v0.2.00
-		"""
+        """
 
-		return False
-	#
+        return False
+    #
 
-	def read(self, n = None):
-	#
-		"""
+    def read(self, n = None):
+        """
 python.org: Read up to n bytes from the object and return them.
 
 :param n: How many bytes to read from the current position (0 means until
@@ -160,74 +147,67 @@ python.org: Read up to n bytes from the object and return them.
 
 :return: (bytes) Data; None if EOF
 :since:  v0.2.00
-		"""
+        """
 
-		if (n is None): n = self.io_chunk_size
+        if (n is None): n = self.io_chunk_size
 
-		if (self._wrapped_resource is None): raise IOException("Streamer resource is invalid")
-		return (self._wrapped_resource.read() if (n < 1) else self._wrapped_resource.read(n))
-	#
+        if (self._wrapped_resource is None): raise IOException("Streamer resource is invalid")
+        return (self._wrapped_resource.read() if (n < 1) else self._wrapped_resource.read(n))
+    #
 
-	def set_file(self, resource):
-	#
-		"""
+    def set_file(self, resource):
+        """
 Sets the file-like resource to be used.
 
 :param resource: File-like resource
 
 :since: v0.2.00
-		"""
+        """
 
-		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
+        if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_file()- (#echo(__LINE__)#)", self, context = "pas_streamer")
 
-		with self._lock:
-		#
-			self._set_wrapped_resource(resource)
-			if (hasattr(resource, "get_size")): self.set_size(resource.get_size())
-		#
-	#
+        with self._lock:
+            self._set_wrapped_resource(resource)
+            if (hasattr(resource, "get_size")): self.set_size(resource.get_size())
+        #
+    #
 
-	def set_io_chunk_size(self, chunk_size):
-	#
-		"""
+    def set_io_chunk_size(self, chunk_size):
+        """
 Sets the IO chunk size to be used for reading.
 
 :param chunk_size: IO chunk size
 
 :since: v0.2.00
-		"""
+        """
 
-		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_io_chunk_size({1:d})- (#echo(__LINE__)#)", self, chunk_size, context = "pas_streamer")
+        if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_io_chunk_size({1:d})- (#echo(__LINE__)#)", self, chunk_size, context = "pas_streamer")
 
-		if (chunk_size is None or chunk_size > 0): self.io_chunk_size = chunk_size
-	#
+        if (chunk_size is None or chunk_size > 0): self.io_chunk_size = chunk_size
+    #
 
-	def set_size(self, size):
-	#
-		"""
+    def set_size(self, size):
+        """
 Sets the size of the resource if calculated externally.
 
 :param size: Resource size
 
 :since: v0.2.00
-		"""
+        """
 
-		if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
+        if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_size({1:d})- (#echo(__LINE__)#)", self, size, context = "pas_streamer")
 
-		if (size is None or size > -1): self.size = size
-	#
+        if (size is None or size > -1): self.size = size
+    #
 
-	def _supports_seeking(self):
-	#
-		"""
+    def _supports_seeking(self):
+        """
 Returns false if the resource has no defined size or does not support
 seeking.
 
 :since: v0.2.00
-		"""
+        """
 
-		return (self.size is not None)
-	#
+        return (self.size is not None)
+    #
 #
-
-##j## EOF
