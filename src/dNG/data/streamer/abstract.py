@@ -17,6 +17,8 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
+# pylint: disable=import-error, no-name-in-module
+
 from dNG.data.supports_mixin import SupportsMixin
 from dNG.module.named_loader import NamedLoader
 from dNG.runtime.iterator import Iterator
@@ -37,7 +39,7 @@ interface is similar to a file one.
              Mozilla Public License, v. 2.0
     """
 
-    # pylint: disable=unused-argument
+    # pylint: disable=invalid-name, unused-argument
 
     def __init__(self, timeout_retries = 5):
         """
@@ -229,6 +231,8 @@ Define a range to be streamed.
 :return: (bool) True if valid
 :since:  v0.2.00
         """
+
+        # pylint: disable=redefined-variable-type
 
         if (self.log_handler is not None): self.log_handler.debug("#echo(__FILEPATH__)# -{0!r}.set_range({1:d}, {2:d})- (#echo(__LINE__)#)", self, range_start, range_end, context = "pas_streamer")
         _return = False

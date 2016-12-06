@@ -17,7 +17,7 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-# pylint: disable=import-error,no-name-in-module
+# pylint: disable=import-error, no-name-in-module
 
 from os import path
 import os
