@@ -43,6 +43,14 @@ Decodes a quoted-printable encoded, encapsulated streamer while being read.
 Binary equal sign representation used to identify encoded bytes.
     """
 
+    _FILE_WRAPPED_METHODS = ( "close",
+                              "is_url_supported",
+                              "open_url",
+                              "seek",
+                              "set_range",
+                              "tell"
+                            )
+
     def __init__(self, streamer):
         """
 Constructor __init__(QuotedPrintableDecoder)
@@ -73,7 +81,7 @@ Reads from the current streamer session without decoding it transparently.
 :since:  v0.2.00
         """
 
-        return AbstractEncapsulated.read(self, _bytes)
+        return self._wrapped_resource.read(self, _bytes)
     #
 
     def read(self, n = None):

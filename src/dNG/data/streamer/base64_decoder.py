@@ -40,6 +40,12 @@ Decodes a base64 encoded, encapsulated streamer while being read.
              Mozilla Public License, v. 2.0
     """
 
+    _FILE_WRAPPED_METHODS = ( "close",
+                              "is_url_supported",
+                              "open_url",
+                              "tell"
+                            )
+
     def __init__(self, streamer):
         """
 Constructor __init__(Base64Decoder)
@@ -70,7 +76,7 @@ Reads from the current streamer session without decoding it transparently.
 :since:  v0.2.00
         """
 
-        return AbstractEncapsulated.read(self, _bytes)
+        return self._wrapped_resource.read(self, _bytes)
     #
 
     def read(self, n = None):
@@ -84,7 +90,7 @@ python.org: Read up to n bytes from the object and return them.
 :since:  v0.2.00
         """
 
-        raw_data_size = ((ceil(4 * (n / 3))) if (n > 0) else self.get_size())
+        raw_data_size = ((ceil(4 * (n / 3))) if (n > 0) else self.size)
         raw_data = self.raw_read(raw_data_size)
 
         decoded_data = (Binary.BYTES_TYPE() if (self.decoded_data is None) else self.decoded_data)
@@ -105,7 +111,7 @@ python.org: Change the stream position to the given byte offset.
         """
 
         if (offset % 3 != 0): raise IOException("Resource can not be seeked to a non-boundary offset")
-        return AbstractEncapsulated.seek(self, offset)
+        return self._wrapped_resource.seek(self, offset)
     #
 
     def set_range(self, range_start, range_end):
@@ -122,6 +128,6 @@ Define a range to be streamed.
         if (range_start % 3 != 0): raise IOException("Resource range start at a non-boundary offset is not supported")
         if (range_end % 3 != 0): raise IOException("Resource range end at a non-boundary offset is not supported")
 
-        return AbstractEncapsulated.set_range(range_start, range_end)
+        return self._wrapped_resource.set_range(range_start, range_end)
     #
 #
