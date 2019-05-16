@@ -7,7 +7,7 @@ The Python Application Services of the direct Netware Group contain
 different modules. Each represents one aspect, feature or provides the base
 functionality for other modules.
 
-"pas_streamer" provides an abstract API to chunk and stream data for a given
+"pas-streamer" provides an abstract API to chunk and stream data for a given
 resource. The file streamer is the reference implementation of it.
 
 ----------------------------------------------------------------------------

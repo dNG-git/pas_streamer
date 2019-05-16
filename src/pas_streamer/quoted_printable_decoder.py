@@ -21,7 +21,7 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 from quopri import decodestring
 
-from dNG.data.binary import Binary
+from dpt_runtime.binary import Binary
 
 from .abstract_encapsulated import AbstractEncapsulated
 
@@ -33,7 +33,7 @@ Decodes a quoted-printable encoded, encapsulated streamer while being read.
 :copyright:  (C) direct Netware Group - All rights reserved
 :package:    pas
 :subpackage: streamer
-:since:      v0.2.00
+:since:      v1.0.0
 :license:    https://www.direct-netware.de/redirect?licenses;mpl2
              Mozilla Public License, v. 2.0
     """
@@ -57,7 +57,7 @@ Constructor __init__(QuotedPrintableDecoder)
 
 :param streamer: Encapsulated streamer instance
 
-:since: v0.2.00
+:since: v1.0.0
         """
 
         AbstractEncapsulated.__init__(self, streamer)
@@ -78,7 +78,7 @@ Reads from the current streamer session without decoding it transparently.
                until EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.2.00
+:since:  v1.0.0
         """
 
         return self._wrapped_resource.read(self, _bytes)
@@ -92,7 +92,7 @@ python.org: Read up to n bytes from the object and return them.
           EOF)
 
 :return: (bytes) Data; None if EOF
-:since:  v0.2.00
+:since:  v1.0.0
         """
 
         raw_data = self.raw_read(n)

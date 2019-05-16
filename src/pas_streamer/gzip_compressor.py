@@ -20,9 +20,8 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 from struct import pack
 from zlib import compressobj, crc32, MAX_WBITS, Z_FINISH
 
-from dNG.runtime.io_exception import IOException
-
-from dNG.data.binary import Binary
+from dpt_runtime.binary import Binary
+from dpt_runtime.io_exception import IOException
 
 class GzipCompressor(object):
     """

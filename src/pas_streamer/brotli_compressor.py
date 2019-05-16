@@ -19,9 +19,8 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 import brotli
 
-from dNG.runtime.io_exception import IOException
-
-from dNG.data.binary import Binary
+from dpt_runtime.binary import Binary
+from dpt_runtime.io_exception import IOException
 
 class BrotliCompressor(object):
     """

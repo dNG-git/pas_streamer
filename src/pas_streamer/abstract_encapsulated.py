@@ -19,8 +19,8 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 
 # pylint: disable=import-error, no-name-in-module
 
-from dNG.runtime.value_exception import ValueException
-from dNG.vfs.file_like_wrapper_mixin import FileLikeWrapperMixin
+from dpt_runtime.value_exception import ValueException
+from dpt_vfs import FileLikeWrapperMixin
 
 from .abstract import Abstract
 
@@ -155,7 +155,7 @@ Returns true if the feature requested is supported by this instance.
 :param feature: Feature name string
 
 :return: (bool) True if supported
-:since:  v0.2.01
+:since:  v1.0.0
         """
 
         _return = self._wrapped_resource.is_supported(feature)
