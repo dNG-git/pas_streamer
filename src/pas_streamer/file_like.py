@@ -17,8 +17,6 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-# pylint: disable=import-error,no-name-in-module
-
 from dpt_runtime.io_exception import IOException
 from dpt_settings import Settings
 from dpt_vfs import FileLikeWrapperMixin
@@ -42,6 +40,15 @@ interface.
     _FILE_WRAPPED_METHODS = ( "seek",
                               "tell"
                             )
+    """
+File IO methods implemented by an wrapped resource.
+    """
+
+    __slots__ = [ "_size" ] + FileLikeWrapperMixin._mixin_slots_
+    """
+python.org: __slots__ reserves space for the declared variables and prevents
+the automatic creation of __dict__ and __weakref__ for each instance.
+    """
 
     def __init__(self, timeout_retries = 5):
         """

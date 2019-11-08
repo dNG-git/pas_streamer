@@ -17,8 +17,6 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-# pylint: disable=import-error, no-name-in-module
-
 from base64 import b64decode
 from math import ceil
 
@@ -45,6 +43,15 @@ Decodes a base64 encoded, encapsulated streamer while being read.
                               "open_url",
                               "tell"
                             )
+    """
+File IO methods implemented by an wrapped resource.
+    """
+
+    __slots__ = [ "_decoded_data" ]
+    """
+python.org: __slots__ reserves space for the declared variables and prevents
+the automatic creation of __dict__ and __weakref__ for each instance.
+    """
 
     def __init__(self, streamer):
         """
@@ -57,7 +64,7 @@ Constructor __init__(Base64Decoder)
 
         AbstractEncapsulated.__init__(self, streamer)
 
-        self.decoded_data = None
+        self._decoded_data = None
         """
 Already decoded data buffer
         """
@@ -93,10 +100,10 @@ python.org: Read up to n bytes from the object and return them.
         raw_data_size = ((ceil(4 * (n / 3))) if (n > 0) else self.size)
         raw_data = self.raw_read(raw_data_size)
 
-        decoded_data = (Binary.BYTES_TYPE() if (self.decoded_data is None) else self.decoded_data)
+        decoded_data = (Binary.BYTES_TYPE() if (self._decoded_data is None) else self._decoded_data)
         if (raw_data is not None): decoded_data += b64decode(raw_data)
 
-        if (len(decoded_data) > n): self.decoded_data = decoded_data[n:]
+        if (len(decoded_data) > n): self._decoded_data = decoded_data[n:]
         return decoded_data[:n]
     #
 

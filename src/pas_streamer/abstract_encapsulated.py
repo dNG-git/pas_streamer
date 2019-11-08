@@ -17,8 +17,6 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-# pylint: disable=import-error, no-name-in-module
-
 from dpt_runtime.value_exception import ValueException
 from dpt_vfs import FileLikeWrapperMixin
 
@@ -45,6 +43,15 @@ The abstract streamer encapsulates another streamer for transforming it.
                               "set_range",
                               "tell"
                             )
+    """
+File IO methods implemented by an wrapped resource.
+    """
+
+    __slots__ = FileLikeWrapperMixin._mixin_slots_
+    """
+python.org: __slots__ reserves space for the declared variables and prevents
+the automatic creation of __dict__ and __weakref__ for each instance.
+    """
 
     def __init__(self, streamer):
         """

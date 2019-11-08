@@ -17,8 +17,6 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-# pylint: disable=import-error, no-name-in-module
-
 from quopri import decodestring
 
 from dpt_runtime.binary import Binary
@@ -42,7 +40,6 @@ Decodes a quoted-printable encoded, encapsulated streamer while being read.
     """
 Binary equal sign representation used to identify encoded bytes.
     """
-
     _FILE_WRAPPED_METHODS = ( "close",
                               "is_url_supported",
                               "open_url",
@@ -50,6 +47,15 @@ Binary equal sign representation used to identify encoded bytes.
                               "set_range",
                               "tell"
                             )
+    """
+File IO methods implemented by an wrapped resource.
+    """
+
+    __slots__ = [ "_decoded_data" ]
+    """
+python.org: __slots__ reserves space for the declared variables and prevents
+the automatic creation of __dict__ and __weakref__ for each instance.
+    """
 
     def __init__(self, streamer):
         """
@@ -62,7 +68,7 @@ Constructor __init__(QuotedPrintableDecoder)
 
         AbstractEncapsulated.__init__(self, streamer)
 
-        self.decoded_data = None
+        self._decoded_data = None
         """
 Already decoded data buffer
         """
@@ -97,7 +103,7 @@ python.org: Read up to n bytes from the object and return them.
 
         raw_data = self.raw_read(n)
 
-        decoded_data = (Binary.BYTES_TYPE() if (self.decoded_data is None) else self.decoded_data)
+        decoded_data = (Binary.BYTES_TYPE() if (self._decoded_data is None) else self._decoded_data)
 
         if (raw_data is not None):
             if (raw_data[-1:] == QuotedPrintableDecoder.BINARY_EQUAL_SIGN):
@@ -108,7 +114,7 @@ python.org: Read up to n bytes from the object and return them.
             decoded_data += decodestring(raw_data)
         #
 
-        if (len(decoded_data) > n): self.decoded_data = decoded_data[n:]
+        if (len(decoded_data) > n): self._decoded_data = decoded_data[n:]
         return decoded_data[:n]
     #
 #

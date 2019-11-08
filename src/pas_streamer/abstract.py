@@ -17,8 +17,6 @@ https://www.direct-netware.de/redirect?licenses;mpl2
 #echo(__FILEPATH__)#
 """
 
-# pylint: disable=import-error, no-name-in-module
-
 from dpt_module_loader import NamedClassLoader
 from dpt_runtime.iterator import Iterator
 from dpt_runtime.not_implemented_exception import NotImplementedException
@@ -40,6 +38,18 @@ interface is similar to a file one.
     """
 
     # pylint: disable=invalid-name, unused-argument
+
+    __slots__ = [ "__weakref__",
+                  "_io_chunk_size",
+                  "_lock",
+                  "_log_handler",
+                  "stream_size",
+                  "timeout_retries"
+                ] + SupportsMixin._mixin_slots_
+    """
+python.org: __slots__ reserves space for the declared variables and prevents
+the automatic creation of __dict__ and __weakref__ for each instance.
+    """
 
     def __init__(self, timeout_retries = 5):
         """
